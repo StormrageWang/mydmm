@@ -1,5 +1,10 @@
 package com.stormrage.mydmm.server.task.dispatch;
 
+/**
+ * 任务执行线程
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class TaskThread extends Thread {
 
 	private IDispatchTask task;

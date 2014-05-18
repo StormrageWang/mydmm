@@ -2,15 +2,24 @@ package com.stormrage.mydmm.server.workfind;
 
 import com.stormrage.mydmm.server.actress.ActressBean;
 
+/**
+ * 作品链接信息
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class WorkFindBean {
 
-	
-	private ActressBean actressBean;
-	private String workTitle;
-	private String workUrl;
+	private String guid;//guid
+	private ActressBean actressBean;//所属的演员
 	private String url;
-	private WorkPageType pageType;
 	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 
 	public ActressBean getActressBean() {
 		return actressBean;
@@ -18,22 +27,6 @@ public class WorkFindBean {
 
 	public void setActressBean(ActressBean actressBean) {
 		this.actressBean = actressBean;
-	}
-
-	public String getWorkTitle() {
-		return workTitle;
-	}
-
-	public void setWorkTitle(String workTitle) {
-		this.workTitle = workTitle;
-	}
-	
-	public String getWorkUrl() {
-		return workUrl;
-	}
-
-	public void setWorkUrl(String workUrl) {
-		this.workUrl = workUrl;
 	}
 
 	public String getUrl() {
@@ -44,11 +37,4 @@ public class WorkFindBean {
 		this.url = url;
 	}
 	
-	public WorkPageType getPageType() {
-		return pageType;
-	}
-	
-	public void setPageType(WorkPageType pageType) {
-		this.pageType = pageType;
-	}
 }

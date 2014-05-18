@@ -14,6 +14,11 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+/**
+ * 网络请求工具类
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class RequestUtils {
 
 	/**

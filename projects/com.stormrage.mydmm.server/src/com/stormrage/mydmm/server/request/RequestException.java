@@ -1,5 +1,10 @@
 package com.stormrage.mydmm.server.request;
 
+/**
+ * 网络请求异常
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class RequestException extends Exception {
 
 	/**

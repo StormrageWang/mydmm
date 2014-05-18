@@ -3,6 +3,7 @@ package com.stormrage.mydmm.server.work;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 
@@ -11,19 +12,17 @@ public class WorkBean {
 
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private String guid;
-	private String fullCode;
-	private String simpleCode;
-	private String jpName;
-	private String chName;
-	private Date date;
-	private int timeLength;
-	private String coverSimpleUrl;
-	private byte[] coverSimpleData;
-	private String coverFullUrl;
-	private byte[] coverFullData;
-	private String[] pictureUrls;
-	private String title;
+	private String guid;//guid
+	private String title;//作品链接上的名称
+	private String fullTitle;//作品具体的名称
+	private String chTitle;//中文名称
+	private String fullCode;//完整番号
+	private String simpleCode;//处理后的番号
+	private Date date;//作品完成时间
+	private int timeLength;//时长（分钟）
+	private PictureBean simpleCover;//封面小图
+	private PictureBean fullCover;//封面大图
+	private PictureBean[] previewPictures;//预览图
 	private String url;
 	private WorkPageType pageType;
 	
@@ -32,6 +31,24 @@ public class WorkBean {
 	}
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getFullTitle() {
+		return fullTitle;
+	}
+	public void setFullTitle(String fullTitle) {
+		this.fullTitle = fullTitle;
+	}
+	public String getChTitle() {
+		return chTitle;
+	}
+	public void setChTitle(String chTitle) {
+		this.chTitle = chTitle;
 	}
 	public String getFullCode() {
 		return fullCode;
@@ -45,18 +62,6 @@ public class WorkBean {
 	public void setSimpleCode(String simpleCode) {
 		this.simpleCode = simpleCode;
 	}
-	public String getJpName() {
-		return jpName;
-	}
-	public void setJpName(String jpName) {
-		this.jpName = jpName;
-	}
-	public String getChName() {
-		return chName;
-	}
-	public void setChName(String chName) {
-		this.chName = chName;
-	}
 	public Date getDate() {
 		return date;
 	}
@@ -69,42 +74,27 @@ public class WorkBean {
 	public void setTimeLength(int timeLength) {
 		this.timeLength = timeLength;
 	}
-
-	public String getCoverSimpleUrl() {
-		return coverSimpleUrl;
+	
+	public PictureBean getSimpleCover() {
+		return simpleCover;
 	}
-	public void setCoverSimpleUrl(String coverSimpleUrl) {
-		this.coverSimpleUrl = coverSimpleUrl;
+	public void setSimpleCover(PictureBean simpleCover) {
+		this.simpleCover = simpleCover;
 	}
-	public byte[] getCoverSimpleData() {
-		return coverSimpleData;
+	public PictureBean getFullCover() {
+		return fullCover;
 	}
-	public void setCoverSimpleData(byte[] coverSimpleData) {
-		this.coverSimpleData = coverSimpleData;
+	public void setFullCover(PictureBean fullCover) {
+		this.fullCover = fullCover;
 	}
-	public String getCoverFullUrl() {
-		return coverFullUrl;
+	public PictureBean[] getPreviewPictures() {
+		return previewPictures;
 	}
-	public void setCoverFullUrl(String coverFullUrl) {
-		this.coverFullUrl = coverFullUrl;
+	public void setPreviewPictures(PictureBean[] previewPictures) {
+		this.previewPictures = previewPictures;
 	}
-	public byte[] getCoverFullData() {
-		return coverFullData;
-	}
-	public void setCoverFullData(byte[] coverFullData) {
-		this.coverFullData = coverFullData;
-	}
-	public String[] getPictureUrls() {
-		return pictureUrls;
-	}
-	public void setPictureUrls(String[] pictureUrls) {
-		this.pictureUrls = pictureUrls;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
+	public static SimpleDateFormat getSdf() {
+		return sdf;
 	}
 	public WorkPageType getPageType() {
 		return pageType;
@@ -120,7 +110,7 @@ public class WorkBean {
 	}
 	
 	public String getInfo(){
-		return  fullCode + " \t " + simpleCode + " \t " + jpName + 
+		return  fullCode + " \t " + simpleCode + " \t " + title + 
 				" \t " + sdf.format(date) + " \t " + timeLength + "\t" + url ;
 	}
 }

@@ -16,6 +16,11 @@ import com.stormrage.mydmm.server.work.request.WorkFactory;
 import com.stormrage.mydmm.server.workfind.WorkFindBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
+/**
+ * 获取作品列表的需要分发的请求任务
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class WorkFindTask implements IDispatchTask {
 
 	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
@@ -57,24 +62,21 @@ public class WorkFindTask implements IDispatchTask {
 				Element workTr = workTrIterator.next();
 				Element titleLink = workTr.child(0).select("a").first();
 				String workTitle = titleLink.html();
-				workFindBean.setWorkTitle(workTitle);
 				Element animationLink = workTr.child(1).select("a").first();
 				Element mailOrderLink = workTr.child(4).select("a").first();
 				if(animationLink != null){
 					String workUrl = animationLink.attr("href");
 					workUrl = RequestUtils.decode(workUrl);
 					workUrl = RequestUtils.addHostUrl(workUrl);
-					workFindBean.setWorkUrl(workUrl);
-					workFindBean.setPageType(WorkPageType.ANIMATION);
-					workFactories[i] = new WorkFactory(workFindBean);
+					workFactories[i] = new WorkFactory(workFindBean.getActressBean(), 
+							workTitle, WorkPageType.ANIMATION, workUrl);
 					i++;
 				} else if(mailOrderLink != null){
 					String workUrl = mailOrderLink.attr("href");
 					workUrl = RequestUtils.decode(workUrl);
 					workUrl = RequestUtils.addHostUrl(workUrl);
-					workFindBean.setWorkUrl(workUrl);
-					workFindBean.setPageType(WorkPageType.MAIL_ORDER);
-					workFactories[i] = new WorkFactory(workFindBean);
+					workFactories[i] = new WorkFactory(workFindBean.getActressBean(), 
+							workTitle, WorkPageType.MAIL_ORDER, workUrl);
 					i++;
 				} else {
 					throw new RequestException("不支持找到作品【" + workTitle + "】的详细信息页面", RequestErrorCode.WEB_ANALYTICS_GET);

@@ -2,6 +2,11 @@ package com.stormrage.mydmm.server.utils;
 
 import java.util.UUID;
 
+/**
+ * 产生guid
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class Guid {
 
     /**

@@ -4,14 +4,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.request.RequestErrorCode;
 import com.stormrage.mydmm.server.request.RequestException;
 import com.stormrage.mydmm.server.request.RequestUtils;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
+import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
+/**
+ * 获取作品信息的需要分发的请求任务
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class WorkTask implements IDispatchTask {
 
 	private ActressBean actressBean;
@@ -38,8 +45,8 @@ public class WorkTask implements IDispatchTask {
 			try {
 				Document doc = RequestUtils.getDocument(url);
 				//获取名称信息
-				String name = doc.select("h1").first().html();
-				workBean.setJpName(name);
+				String fullTitle = doc.select("h1").first().html();
+				workBean.setFullTitle(fullTitle);
 				//基本信息
 				if(workBean.getPageType() == WorkPageType.ANIMATION){
 					WorkUtils.fullWorkByAnimationPage(workBean, doc);
@@ -50,23 +57,34 @@ public class WorkTask implements IDispatchTask {
 				}
 				//封面信息
 				Element coverDiv = doc.select("#sample-video").first();
+				//小图
 				Element simpleCoverLink = coverDiv.select("a").first();
-				Element fullCoverImg = coverDiv.select("img").first();
 				String simpleCoverUrl = simpleCoverLink.attr("href");
+				PictureBean simpleCoverBean = new PictureBean();
+				simpleCoverBean.setGuid(Guid.newGuid());
+				simpleCoverBean.setUrl(simpleCoverUrl);
+				workBean.setSimpleCover(simpleCoverBean);
+				//大图
+				Element fullCoverImg = coverDiv.select("img").first();
 				String fullCoverUrl = fullCoverImg.attr("src");
-				workBean.setCoverSimpleUrl(simpleCoverUrl);
-				workBean.setCoverFullUrl(fullCoverUrl);
+				PictureBean fullCoverBean = new PictureBean();
+				fullCoverBean.setGuid(Guid.newGuid());
+				fullCoverBean.setUrl(fullCoverUrl);
+				workBean.setFullCover(fullCoverBean);
 				//预览信息
 				Element pictureDiv = doc.select("#sample-image-block").first();
 				if(pictureDiv != null){
 					Elements pictureLinks = pictureDiv.select("a");
-					String[] pictureUrls = new String[pictureLinks.size()];
+					PictureBean[] pictureBeans = new PictureBean[pictureLinks.size()];
 					int i = 0;
 					for(Element pictureLink : pictureLinks){
 						String pictureUrl = pictureLink.children().first().attr("src");
-						pictureUrls[i] = pictureUrl;
+						PictureBean pictureBean = new PictureBean();
+						pictureBean.setGuid(Guid.newGuid());
+						pictureBean.setUrl(pictureUrl);
+						pictureBeans[i] = pictureBean;
 					}
-					workBean.setPictureUrls(pictureUrls);
+					workBean.setPreviewPictures(pictureBeans);
 				}
 				//添加演员信息中
 				actressBean.addWorkBean(workBean);

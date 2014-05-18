@@ -2,6 +2,11 @@ package com.stormrage.mydmm.server.task.dispatch;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * 要分发的任务工厂管理类
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class DispatchTaskFactoryManager {
 	
 	/**

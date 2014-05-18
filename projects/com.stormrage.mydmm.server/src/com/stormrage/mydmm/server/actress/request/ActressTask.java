@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
+import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.request.RequestErrorCode;
 import com.stormrage.mydmm.server.request.RequestException;
@@ -15,8 +16,14 @@ import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
 import com.stormrage.mydmm.server.request.RequestUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
+import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.workfind.request.WorkFindTaskFactory;
 
+/**
+ * 从获取演员信息的需要分发的请求任务
+ * @author StormrageWang
+ * @date 2014年5月18日 
+ */
 public class ActressTask implements IDispatchTask {
 
 	private final static String JP_LEFT_BRACKET = "（";
@@ -63,8 +70,10 @@ public class ActressTask implements IDispatchTask {
 			Element actressPicture = actressPictureTable.select("img").first();
 			String pictureUrl = actressPicture.attr("src");
 			pictureUrl = RequestUtils.decode(pictureUrl);
-			actressBean.setPictureUrl(pictureUrl);
-			
+			PictureBean pictureBean = new PictureBean();
+			pictureBean.setGuid(Guid.newGuid());
+			pictureBean.setUrl(pictureUrl);
+			actressBean.setPicture(pictureBean);
 			//解析出需要分析的作品发现链接
 			Element workFindTable = tables.get(12);
 			Elements findTds = workFindTable.select("td");

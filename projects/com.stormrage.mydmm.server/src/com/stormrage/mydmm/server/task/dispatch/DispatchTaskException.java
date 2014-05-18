@@ -1,12 +1,16 @@
 package com.stormrage.mydmm.server.task.dispatch;
 
+/**
+ * 任务分发异常
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class DispatchTaskException extends Exception {
 
 	/**
-	 * 序列号
+	 * 
 	 */
-	private static final long serialVersionUID = 2362982593832075183L;
-
+	private static final long serialVersionUID = 3608499655372850691L;
 	private int errorCode;
 
 	public DispatchTaskException() {

@@ -4,6 +4,11 @@ import com.stormrage.mydmm.server.request.RequestErrorCode;
 import com.stormrage.mydmm.server.request.RequestException;
 
 
+/**
+ * 演员相关的工具类
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class ActressUtils {
 
 	private static final String WORK_COUNT_PREFIX = "全";

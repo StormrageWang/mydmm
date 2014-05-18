@@ -14,7 +14,11 @@ import com.stormrage.mydmm.server.utils.StringUtils;
 import com.stormrage.mydmm.server.work.WorkBean;
 
 
-
+/**
+ * 作品相关工具类
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class WorkUtils {
 	
 	private static final String TIME_LENGTH_SUFFIX = "分";

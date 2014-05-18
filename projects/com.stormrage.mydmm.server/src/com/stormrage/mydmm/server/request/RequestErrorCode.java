@@ -1,5 +1,10 @@
 package com.stormrage.mydmm.server.request;
 
+/**
+ * 网络请求错误代码
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class RequestErrorCode {
 
 

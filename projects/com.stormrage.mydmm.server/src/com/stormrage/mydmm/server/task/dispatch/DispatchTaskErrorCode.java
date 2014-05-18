@@ -1,5 +1,10 @@
 package com.stormrage.mydmm.server.task.dispatch;
 
+/**
+ * 任务分发错误代码
+ * @author StormrageWang
+ * @date 2014年5月18日
+ */
 public class DispatchTaskErrorCode {
 
 	/**

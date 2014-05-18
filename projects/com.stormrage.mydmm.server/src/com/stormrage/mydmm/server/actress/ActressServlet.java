@@ -12,7 +12,11 @@ import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.utils.StringUtils;
 
-
+/**
+ * 演员信息相关的servlet服务
+ * @author StormrageWang
+ * @date 2014年5月18日 
+ */
 public class ActressServlet extends HttpServlet {
 
 	/**

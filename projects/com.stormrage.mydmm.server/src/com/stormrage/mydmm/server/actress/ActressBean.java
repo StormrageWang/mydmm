@@ -4,20 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.work.WorkBean;
 
-
-
+/**
+ * 演员信息
+ * @author StormrageWang
+ * @date 2014年5月18日 
+ */
 public class ActressBean {
 
-	private String guid;
-	private String name;
-	private String jpName;
-	private String pictureGuid;
-	private byte[] pictureData;
-	private String url;
-	private String pictureUrl;
-	private List<WorkBean> works = new ArrayList<WorkBean>(50);
+	private String guid;//guid
+	private String name;//姓名
+	private String jpName;//片假名
+	private PictureBean picture;
+	private String url;//演员信息的页面url
+	private List<WorkBean> works = new ArrayList<WorkBean>(50);//包含的作品
 	
 	public String getGuid() {
 		return guid;
@@ -43,22 +45,6 @@ public class ActressBean {
 		this.jpName = jpName;
 	}
 	
-	public String getPictureGuid() {
-		return pictureGuid;
-	}
-	
-	public void setPictureGuid(String pictureGuid) {
-		this.pictureGuid = pictureGuid;
-	}
-	
-	public byte[] getPictureData() {
-		return pictureData;
-	}
-	
-	public void setPictureData(byte[] pictureData) {
-		this.pictureData = pictureData;
-	}
-	
 	public String getUrl() {
 		return url;
 	}
@@ -67,12 +53,12 @@ public class ActressBean {
 		this.url = url;
 	}
 	
-	public String getPictureUrl() {
-		return pictureUrl;
+	public PictureBean getPicture() {
+		return picture;
 	}
 	
-	public void setPictureUrl(String pictureUrl) {
-		this.pictureUrl = pictureUrl;
+	public void setPicture(PictureBean picture) {
+		this.picture = picture;
 	}
 
 	public Iterator<WorkBean> getWorkIterator(){
