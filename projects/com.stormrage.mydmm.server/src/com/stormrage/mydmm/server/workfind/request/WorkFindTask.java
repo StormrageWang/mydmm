@@ -8,10 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.stormrage.mydmm.server.request.RequestErrorCode;
-import com.stormrage.mydmm.server.request.RequestException;
 import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
-import com.stormrage.mydmm.server.request.RequestUtils;
+import com.stormrage.mydmm.server.task.TaskErrorCode;
+import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.work.request.WorkFactory;
@@ -44,10 +44,10 @@ public class WorkFindTask implements IDispatchTask {
 			//更新url
 			logger.info("开始获取演员【" + workFindBean.getActressBean().getName() + "】作品链接");
 			String url = workFindBean.getUrl();
-			url = RequestUtils.decode(url);
+			url = TaskUtils.decode(url);
 			workFindBean.setUrl(url);
 			//打开连接
-			Document doc = RequestUtils.getDocument(url);
+			Document doc = TaskUtils.getDocument(url);
 			Elements tables = doc.select("#mu table");
 			//解析出作品链接
 			Element workTable = tables.get(13);
@@ -57,7 +57,7 @@ public class WorkFindTask implements IDispatchTask {
 			if(workTrIterator.hasNext()){
 				workTrIterator.next();
 			} else {
-				throw new RequestException("作品列表没有表头", RequestErrorCode.WEB_ANALYTICS_GET);
+				throw new TaskException("作品列表没有表头", TaskErrorCode.TASK_ANALYTICS_GET);
 			}
 			int workCount = workTrs.size() - 1;
 			int i = 0;
@@ -70,31 +70,31 @@ public class WorkFindTask implements IDispatchTask {
 				Element mailOrderLink = workTr.child(4).select("a").first();
 				if(animationLink != null){
 					String workUrl = animationLink.attr("href");
-					workUrl = RequestUtils.decode(workUrl);
-					workUrl = RequestUtils.addHostUrl(workUrl);
+					workUrl = TaskUtils.decode(workUrl);
+					workUrl = TaskUtils.addHostUrl(workUrl);
 					workFactories[i] = new WorkFactory(workFindBean.getActressBean(), 
 							workTitle, WorkPageType.ANIMATION, workUrl);
 					i++;
 				} else if(mailOrderLink != null){
 					String workUrl = mailOrderLink.attr("href");
-					workUrl = RequestUtils.decode(workUrl);
-					workUrl = RequestUtils.addHostUrl(workUrl);
+					workUrl = TaskUtils.decode(workUrl);
+					workUrl = TaskUtils.addHostUrl(workUrl);
 					workFactories[i] = new WorkFactory(workFindBean.getActressBean(), 
 							workTitle, WorkPageType.MAIL_ORDER, workUrl);
 					i++;
 				} else {
-					throw new RequestException("不支持找到作品【" + workTitle + "】的详细信息页面", RequestErrorCode.WEB_ANALYTICS_GET);
+					throw new TaskException("不支持找到作品【" + workTitle + "】的详细信息页面", TaskErrorCode.TASK_ANALYTICS_GET);
 				}
 			}
 			if(i != workCount){
-				throw new RequestException("获取作品列表任务未添加完，应添加【" + workCount + "】，只添加了【" + i +  " 】", RequestErrorCode.WEB_ANALYTICS_UNMATCH);
+				throw new TaskException("获取作品列表任务未添加完，应添加【" + workCount + "】，只添加了【" + i +  " 】", TaskErrorCode.TASK_ANALYTICS_UNMATCH);
 			}
 			logger.info("开始获取演员【" + workFindBean.getActressBean().getName() + "】作品链接成功，共有" + workCount + "个");
 			for(WorkFactory workFactory : workFactories){
 				factoryManager.addDispatchFactory(workFactory);
 			}
 			logger.info("演员【" + workFindBean.getActressBean().getName() + "】作品链接已经加入网页请求任务队列");
-		} catch (RequestException e) {
+		} catch (TaskException e) {
 			logger.error("获取演员【" + workFindBean.getActressBean().getName() + "】作品链接失败" + e.getMessage());
 			e.printStackTrace();
 		} 

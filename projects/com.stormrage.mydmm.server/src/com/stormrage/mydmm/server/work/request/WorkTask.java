@@ -6,11 +6,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.actress.ActressBean;
-import com.stormrage.mydmm.server.request.RequestErrorCode;
-import com.stormrage.mydmm.server.request.RequestException;
-import com.stormrage.mydmm.server.request.RequestUtils;
+import com.stormrage.mydmm.server.picture.PictureBean;
+import com.stormrage.mydmm.server.task.TaskErrorCode;
+import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkBean;
@@ -23,9 +23,11 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
  */
 public class WorkTask implements IDispatchTask {
 
+	private static Logger logger = LogManager.getLogger();
 	private ActressBean actressBean;
 	private WorkBean workBean;
-	private static Logger logger = LogManager.getLogger();
+	private PictureBean simpleCoverBean, fullCoverBean;
+	private PictureBean[] previewPictureBeans = new PictureBean[0];
 	
 	public WorkTask(ActressBean actressBean, WorkBean workBean) {
 		this.actressBean = actressBean;
@@ -43,10 +45,10 @@ public class WorkTask implements IDispatchTask {
 		try {
 			logger.info("开始获取作品【" + workBean.getTitle() + "】信息");
 			String url = workBean.getUrl();
-			url = RequestUtils.decode(url);
+			url = TaskUtils.decode(url);
 			workBean.setUrl(url);
 			//打开连接
-			Document doc = RequestUtils.getDocument(url);
+			Document doc = TaskUtils.getDocument(url);
 			//获取名称信息
 			String fullTitle = doc.select("h1").first().html();
 			workBean.setFullTitle(fullTitle);
@@ -56,43 +58,41 @@ public class WorkTask implements IDispatchTask {
 			} else if(workBean.getPageType() == WorkPageType.MAIL_ORDER) {
 				WorkUtils.fullWorkByMailOrderPage(workBean, doc);
 			} else {
-				throw new RequestException("不支持从作品【" + workBean.getTitle() + "】的页面中获取信息", RequestErrorCode.WEB_ANALYTICS_GET);
+				throw new TaskException("不支持从作品【" + workBean.getTitle() + "】的页面中获取信息", TaskErrorCode.TASK_ANALYTICS_GET);
 			}
 			//封面信息
 			Element coverDiv = doc.select("#sample-video").first();
 			//小图
 			Element simpleCoverLink = coverDiv.select("a").first();
 			String simpleCoverUrl = simpleCoverLink.attr("href");
-			PictureBean simpleCoverBean = new PictureBean();
+			simpleCoverBean = new PictureBean();
 			simpleCoverBean.setGuid(Guid.newGuid());
 			simpleCoverBean.setUrl(simpleCoverUrl);
-			workBean.setSimpleCover(simpleCoverBean);
+			workBean.setSimpleCoverGuid(simpleCoverBean.getGuid());
 			//大图
 			Element fullCoverImg = coverDiv.select("img").first();
 			String fullCoverUrl = fullCoverImg.attr("src");
-			PictureBean fullCoverBean = new PictureBean();
+			fullCoverBean = new PictureBean();
 			fullCoverBean.setGuid(Guid.newGuid());
 			fullCoverBean.setUrl(fullCoverUrl);
-			workBean.setFullCover(fullCoverBean);
+			workBean.setFullCoverGuid(fullCoverBean.getGuid());
 			//预览信息
 			Element pictureDiv = doc.select("#sample-image-block").first();
 			if(pictureDiv != null){
 				Elements pictureLinks = pictureDiv.select("a");
-				PictureBean[] pictureBeans = new PictureBean[pictureLinks.size()];
+				previewPictureBeans = new PictureBean[pictureLinks.size()];
 				int i = 0;
 				for(Element pictureLink : pictureLinks){
 					String pictureUrl = pictureLink.children().first().attr("src");
 					PictureBean pictureBean = new PictureBean();
 					pictureBean.setGuid(Guid.newGuid());
 					pictureBean.setUrl(pictureUrl);
-					pictureBeans[i] = pictureBean;
+					previewPictureBeans[i] = pictureBean;
 				}
-				workBean.setPreviewPictures(pictureBeans);
 			}
 			//添加演员信息中
 			logger.info("获取作品【" + workBean.getTitle() + "】信息成功：" + workBean.getDescription());
-			actressBean.addWorkBean(workBean);
-		} catch (RequestException e) {
+		} catch (TaskException e) {
 			e.printStackTrace();
 		}
 	}

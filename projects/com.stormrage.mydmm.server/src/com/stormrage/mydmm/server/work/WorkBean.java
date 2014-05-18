@@ -3,14 +3,13 @@ package com.stormrage.mydmm.server.work;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.stormrage.mydmm.server.PictureBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 
 
 public class WorkBean {
 
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
 	private String guid;//guid
 	private String title;//作品链接上的名称
@@ -20,9 +19,8 @@ public class WorkBean {
 	private String simpleCode;//处理后的番号
 	private Date date;//作品完成时间
 	private int timeLength;//时长（分钟）
-	private PictureBean simpleCover;//封面小图
-	private PictureBean fullCover;//封面大图
-	private PictureBean[] previewPictures;//预览图
+	private String simpleCoverGuid;//封面小图
+	private String fullCoverGuid;//封面大图
 	private String url;
 	private WorkPageType pageType;
 	
@@ -75,33 +73,29 @@ public class WorkBean {
 		this.timeLength = timeLength;
 	}
 	
-	public PictureBean getSimpleCover() {
-		return simpleCover;
+	public String getSimpleCoverGuid() {
+		return simpleCoverGuid;
 	}
-	public void setSimpleCover(PictureBean simpleCover) {
-		this.simpleCover = simpleCover;
+	
+	public void setSimpleCoverGuid(String simpleCoverGuid) {
+		this.simpleCoverGuid = simpleCoverGuid;
 	}
-	public PictureBean getFullCover() {
-		return fullCover;
+	
+	public String getFullCoverGuid() {
+		return fullCoverGuid;
 	}
-	public void setFullCover(PictureBean fullCover) {
-		this.fullCover = fullCover;
+	public void setFullCoverGuid(String fullCoverGuid) {
+		this.fullCoverGuid = fullCoverGuid;
 	}
-	public PictureBean[] getPreviewPictures() {
-		return previewPictures;
-	}
-	public void setPreviewPictures(PictureBean[] previewPictures) {
-		this.previewPictures = previewPictures;
-	}
-	public static SimpleDateFormat getSdf() {
-		return sdf;
-	}
+
 	public WorkPageType getPageType() {
 		return pageType;
 	}
+	
 	public void setPageType(WorkPageType pageType) {
 		this.pageType = pageType;
 	}
+	
 	public String getUrl() {
 		return url;
 	}

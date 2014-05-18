@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.stormrage.mydmm.server.actress.request.ActressTaskFactory;
 import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
+import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.utils.StringUtils;
 
@@ -35,8 +37,13 @@ public class ActressServlet extends HttpServlet {
 		if(StringUtils.isEmpty(actressUrl)){
 			return;
 		}
-		ActressTaskFactory actressFactory = new ActressTaskFactory(actressUrl);
-		factoryManager.addDispatchFactory(actressFactory);
+		try {
+			actressUrl = TaskUtils.decode(actressUrl);
+			ActressTaskFactory actressFactory = new ActressTaskFactory(actressUrl);
+			factoryManager.addDispatchFactory(actressFactory);
+		} catch (TaskException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

@@ -5,7 +5,6 @@ import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkBean;
-import com.stormrage.mydmm.server.workfind.WorkFindBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 /**
@@ -22,9 +21,9 @@ public class WorkFactory implements IDispatchTaskFactory{
 		this.actressBean = actressBean;
 		workBean = new WorkBean();
 		workBean.setGuid(Guid.newGuid());
-		workBean.setUrl(url);
 		workBean.setTitle(title);
 		workBean.setPageType(type);
+		workBean.setUrl(url);
 	}
 	
 	@Override

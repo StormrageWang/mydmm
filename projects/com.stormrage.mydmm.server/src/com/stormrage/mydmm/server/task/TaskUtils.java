@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.request;
+package com.stormrage.mydmm.server.task;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,19 +10,18 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Properties;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.stormrage.mydmm.server.utils.Guid;
+
 /**
- * 网络请求工具类
+ * 任务工具类
  * @author StormrageWang
  * @date 2014年5月18日
  */
-public class RequestUtils {
+public class TaskUtils {
 
 	/**
 	 * 编码
@@ -45,13 +44,13 @@ public class RequestUtils {
 	 * 解码
 	 * @param url
 	 * @return
-	 * @throws RequestException
+	 * @throws TaskException
 	 */
-	public static String decode(String url) throws RequestException {
+	public static String decode(String url) throws TaskException {
 		try {
 			return URLDecoder.decode(url, ENCODE);
 		} catch (UnsupportedEncodingException e) {
-			throw new RequestException ("请求【" + url + "】解码错误", e.fillInStackTrace(), RequestErrorCode.WEB_REQUEST_ENCODE);
+			throw new TaskException ("请求【" + url + "】解码错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_ENCODE);
 		}
 	}
 	
@@ -59,16 +58,16 @@ public class RequestUtils {
 	 * 解码
 	 * @param url
 	 * @return
-	 * @throws RequestException
+	 * @throws TaskException
 	 */
-	public static String addHostUrl(String url) throws RequestException {
+	public static String addHostUrl(String url) throws TaskException {
 		if(url.startsWith(PRIFIX_DRIECT)){
 			return DMM_HOST_URL + url;
 		}
 		if(url.startsWith(DMM_HOST_URL)){
 			return url;
 		}
-		throw new RequestException("请求【" + url + "】无法识别", RequestErrorCode.WEB_ANALYTICS_UNMATCH);
+		throw new TaskException("请求【" + url + "】无法识别", TaskErrorCode.TASK_ANALYTICS_UNMATCH);
 	}
 	
 	/**
@@ -89,9 +88,9 @@ public class RequestUtils {
 	 * 根据url获取html内容
 	 * @param url 网络地址
 	 * @return html内容
-	 * @throws RequestException
+	 * @throws TaskException
 	 */
-	public static Document getDocument(String url) throws RequestException{
+	public static Document getDocument(String url) throws TaskException{
 		decode(url);//转码
 		Connection conn = Jsoup.connect(url);
 		conn.userAgent(USER_AGENT).timeout(TIMEOUT);
@@ -99,7 +98,7 @@ public class RequestUtils {
 			Document document = conn.get();
 			return document;
 		} catch (IOException e) {
-			throw new RequestException("请求【" + url + "】连接IO错误", e.fillInStackTrace(), RequestErrorCode.WEB_REQUEST_IO);
+			throw new TaskException("请求【" + url + "】连接IO错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_IO);
 		}
 	}
 	
@@ -108,9 +107,9 @@ public class RequestUtils {
 	 * 根据url获取二进制内容
 	 * @param url
 	 * @return
-	 * @throws RequestException
+	 * @throws TaskException
 	 */
-	public static byte[] getData(String url) throws RequestException{
+	public static byte[] getData(String url) throws TaskException{
 		byte[] data = new byte[0];
 		url = decode(url);
 		try{
@@ -126,13 +125,13 @@ public class RequestUtils {
 					}
 					return data;
 				} catch (IOException e) {
-					throw new RequestException ("请求【" + url + "】IO错误", e.fillInStackTrace(), RequestErrorCode.WEB_REQUEST_IO);
+					throw new TaskException ("请求【" + url + "】IO错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_IO);
 				}
 			} catch (IOException e) {
-				throw new RequestException ("请求【" + url + "】打开连接错误", e.fillInStackTrace(), RequestErrorCode.WEB_REQUEST_IO);
+				throw new TaskException ("请求【" + url + "】打开连接错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_IO);
 			}
 		} catch (MalformedURLException e) {
-			throw new RequestException ("请求【" + url + "】格式错误", e.fillInStackTrace(), RequestErrorCode.WEB_REQUEST_EFORMAT);
+			throw new TaskException ("请求【" + url + "】格式错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_EFORMAT);
 		}
 	}
 	
@@ -156,9 +155,11 @@ public class RequestUtils {
 		}
 	}
 	
-	private static Logger logger = LogManager.getLogger();
-	
 	public static void main(String[] args) {
-		logger.info("test");
+		System.out.println(Guid.newGuid());
+		System.out.println(Guid.newGuid().length());
+		String url = "http://www.unblockdmm.com/browse.php?u=http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Fdetail%2F%3D%2Fcid%3Dmibd00725%2F&b=0";
+		System.out.println(url.length());
 	}
+	
 }

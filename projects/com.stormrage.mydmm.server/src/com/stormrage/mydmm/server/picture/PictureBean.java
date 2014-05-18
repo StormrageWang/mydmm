@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server;
+package com.stormrage.mydmm.server.picture;
 
 /**
  * 图片信息

@@ -3,7 +3,6 @@ package com.stormrage.mydmm.server.actress.request;
 import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
-import com.stormrage.mydmm.server.utils.Guid;
 
 /**
  * 获取演员信息的需要分发的请求任务工厂
@@ -16,7 +15,6 @@ public class ActressTaskFactory implements IDispatchTaskFactory {
 	
 	public ActressTaskFactory(String url){
 		actressBean = new ActressBean();
-		actressBean.setGuid(Guid.newGuid());
 		actressBean.setUrl(url);
 	}
 	
