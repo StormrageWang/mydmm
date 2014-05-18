@@ -69,4 +69,8 @@ public class ActressBean {
 		works.add(workBean);
 	}
 	
+	public String getDescription(){
+		return "[" + guid + "]" + " \t " + name  + " \t " + url;
+	}
+	
 }

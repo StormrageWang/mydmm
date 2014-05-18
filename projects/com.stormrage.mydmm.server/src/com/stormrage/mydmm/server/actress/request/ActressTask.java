@@ -3,6 +3,8 @@ package com.stormrage.mydmm.server.actress.request;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -26,9 +28,11 @@ import com.stormrage.mydmm.server.workfind.request.WorkFindTaskFactory;
  */
 public class ActressTask implements IDispatchTask {
 
-	private final static String JP_LEFT_BRACKET = "（";
-	private final static String JP_RIGHT_BRACKET = "）";
+	private static final String JP_LEFT_BRACKET = "（";
+	private static final String JP_RIGHT_BRACKET = "）";
+	private static final int PAGE_CAPACITY = 50;
 	
+	private static Logger logger = LogManager.getLogger();
 	private ActressBean actressBean;
 	private Set<String> workFindUrlSet = new HashSet<String>(10);
 	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
@@ -39,11 +43,12 @@ public class ActressTask implements IDispatchTask {
 	
 	@Override
 	public String getName() {
-		return "演员信息获取任务";
+		return "获取演员信息";
 	}
 
 	@Override
 	public void run() {
+		logger.info("开始获取演员信息");
 		try {
 			//更新url
 			String url = actressBean.getUrl();
@@ -74,17 +79,18 @@ public class ActressTask implements IDispatchTask {
 			pictureBean.setGuid(Guid.newGuid());
 			pictureBean.setUrl(pictureUrl);
 			actressBean.setPicture(pictureBean);
+			logger.info("演员信息获取完成：" + actressBean.getDescription());
 			//解析出需要分析的作品发现链接
+			logger.info("获取演员【" + actressBean.getName() + "】作品列表链接");
 			Element workFindTable = tables.get(12);
 			Elements findTds = workFindTable.select("td");
 			//获取总页数
 			Element headerTd = findTds.get(0);
 			Node fullDescNode = headerTd.childNode(0);
 			String fullDescStr =  fullDescNode.outerHtml();
-			int workCount = ActressUtils.getWorkCount(fullDescStr);
-			int pageCapacity = ActressUtils.getPageCapacity(fullDescStr);
-			int pageCount = workCount / pageCapacity;
-			if(workCount % pageCapacity != 0){
+			int workCount = ActressUtils.getTotalWorkCount(fullDescStr);
+			int pageCount = workCount / PAGE_CAPACITY;
+			if(workCount % PAGE_CAPACITY != 0){
 				pageCount = pageCount + 1;
 			}
 			//获取获取作品的链接
@@ -108,10 +114,13 @@ public class ActressTask implements IDispatchTask {
 			if(i != pageCount){
 				throw new RequestException("获取作品列表任务未添加完，应添加【" + pageCount + "】，只添加了【" + i +  " 】", RequestErrorCode.WEB_ANALYTICS_UNMATCH);
 			}
+			logger.info("获取演员【" + actressBean.getName() + "】作品列表链接完成，共有" + pageCount + "个");
 			for(WorkFindTaskFactory workFindTaskFactory : workFindFactories){
 				factoryManager.addDispatchFactory(workFindTaskFactory);
 			}
+			logger.info("演员【" + actressBean.getName() + "】所有作品列表链接已经加入网页请求任务队列");
 		} catch (RequestException e) {
+			logger.error("获取演员信息失败：" + e.getMessage());
 			e.printStackTrace();
 		} 
 	}

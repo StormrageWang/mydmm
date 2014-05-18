@@ -109,7 +109,7 @@ public class WorkBean {
 		this.url = url;
 	}
 	
-	public String getInfo(){
+	public String getDescription(){
 		return  fullCode + " \t " + simpleCode + " \t " + title + 
 				" \t " + sdf.format(date) + " \t " + timeLength + "\t" + url ;
 	}

@@ -2,6 +2,8 @@ package com.stormrage.mydmm.server.workfind.request;
 
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -25,6 +27,7 @@ public class WorkFindTask implements IDispatchTask {
 
 	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
 	private WorkFindBean workFindBean;
+	private static Logger logger = LogManager.getLogger();
 	
 	public WorkFindTask(WorkFindBean workFindBean){
 		this.workFindBean = workFindBean;
@@ -39,6 +42,7 @@ public class WorkFindTask implements IDispatchTask {
 	public void run() {
 		try {
 			//更新url
+			logger.info("开始获取演员【" + workFindBean.getActressBean().getName() + "】作品链接");
 			String url = workFindBean.getUrl();
 			url = RequestUtils.decode(url);
 			workFindBean.setUrl(url);
@@ -85,10 +89,13 @@ public class WorkFindTask implements IDispatchTask {
 			if(i != workCount){
 				throw new RequestException("获取作品列表任务未添加完，应添加【" + workCount + "】，只添加了【" + i +  " 】", RequestErrorCode.WEB_ANALYTICS_UNMATCH);
 			}
+			logger.info("开始获取演员【" + workFindBean.getActressBean().getName() + "】作品链接成功，共有" + workCount + "个");
 			for(WorkFactory workFactory : workFactories){
 				factoryManager.addDispatchFactory(workFactory);
 			}
+			logger.info("演员【" + workFindBean.getActressBean().getName() + "】作品链接已经加入网页请求任务队列");
 		} catch (RequestException e) {
+			logger.error("获取演员【" + workFindBean.getActressBean().getName() + "】作品链接失败" + e.getMessage());
 			e.printStackTrace();
 		} 
 	}

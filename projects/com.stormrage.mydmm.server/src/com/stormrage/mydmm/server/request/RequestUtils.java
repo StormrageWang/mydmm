@@ -10,6 +10,9 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -153,4 +156,9 @@ public class RequestUtils {
 		}
 	}
 	
+	private static Logger logger = LogManager.getLogger();
+	
+	public static void main(String[] args) {
+		logger.info("test");
+	}
 }

@@ -23,7 +23,7 @@ public class ActressUtils {
 	 * @return
 	 * @throws RequestException
 	 */
-	public static int getWorkCount(String fullDescStr) throws RequestException {
+	public static int getTotalWorkCount(String fullDescStr) throws RequestException {
 		int prtfixIndex = fullDescStr.indexOf(WORK_COUNT_PREFIX);
 		int suffixIndex = fullDescStr.indexOf(WORK_COUNT_SUFFIX, prtfixIndex);
 		String countStr = fullDescStr.substring(prtfixIndex + WORK_COUNT_PREFIX.length(), suffixIndex);
@@ -41,7 +41,7 @@ public class ActressUtils {
 	 * @return
 	 * @throws RequestException
 	 */
-	public static int getPageCapacity(String fullDescStr) throws RequestException {
+	public static int getCurrentWorkCount(String fullDescStr) throws RequestException {
 		int prtfixIndex = fullDescStr.indexOf(PAGE_CAPACITY_PREFIX);
 		int suffixIndex = fullDescStr.indexOf(PAGE_CAPACITY_SUFFIX, prtfixIndex);
 		String capacityStr = fullDescStr.substring(prtfixIndex + PAGE_CAPACITY_PREFIX.length(), suffixIndex);
