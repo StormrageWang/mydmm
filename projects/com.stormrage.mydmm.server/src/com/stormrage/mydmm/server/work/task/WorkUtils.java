@@ -137,12 +137,23 @@ public class WorkUtils {
 	 */
 	public static String getSimpleCode(String fullCode) throws TaskException {
 		//从后往前分析
+		int startIndex = fullCode.length() - 1;
+		//如果已字符结尾，先去掉结尾的字符
+		char lastChar = fullCode.charAt(startIndex);
+		if(isLowerLetter(lastChar)){
+			for( ; startIndex >= 0; startIndex--){
+				char c = fullCode.charAt(startIndex);
+				if(!isLowerLetter(c)){
+					break;
+				} 
+			}
+		}
 		char[] codeChars = new char[fullCode.length()];
 		char[] signChars = new char[fullCode.length()];
 		int codeIndex = 0, signIndex = 0;
 		boolean codeCompleted = false, signCompleted = false;
-		for(int i = fullCode.length() - 1 ; i >= 0; i--){
-			char c = fullCode.charAt(i);
+		for( ; startIndex >= 0; startIndex--){
+			char c = fullCode.charAt(startIndex);
 			if(codeCompleted && signCompleted){//2个都已解析出来
 				break;
 			} else if(codeCompleted & !signCompleted){//只解析出来代码
