@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.workfind.request;
+package com.stormrage.mydmm.server.workfind.task;
 
 import java.util.Iterator;
 
@@ -8,13 +8,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
-import com.stormrage.mydmm.server.work.request.WorkFactory;
+import com.stormrage.mydmm.server.work.task.WorkFactory;
 import com.stormrage.mydmm.server.workfind.WorkFindBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
@@ -25,7 +25,7 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
  */
 public class WorkFindTask implements IDispatchTask {
 
-	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private WorkFindBean workFindBean;
 	private static Logger logger = LogManager.getLogger();
 	

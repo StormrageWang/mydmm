@@ -8,9 +8,9 @@ import javax.servlet.ServletContextListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.stormrage.mydmm.server.request.DefaultDispatchExceptionHandler;
-import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
+import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
+import com.stormrage.mydmm.server.task.dispatch.DefaultDispatchExceptionHandler;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 
 /**
@@ -20,7 +20,7 @@ import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
  */
 public class ServerListener implements ServletContextListener {
 
-	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private static Logger logger = LogManager.getLogger();
 	
 	@Override

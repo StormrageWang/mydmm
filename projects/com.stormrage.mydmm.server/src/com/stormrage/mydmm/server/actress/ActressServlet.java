@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.stormrage.mydmm.server.actress.request.ActressTaskFactory;
-import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
+import com.stormrage.mydmm.server.actress.task.ActressTaskFactory;
 import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.utils.StringUtils;
@@ -26,7 +26,7 @@ public class ActressServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 6963539265640976779L;
 	private static final String PARAMETER_NAME_ACTREE = "actressUrl";
-	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	
 	
 	@Override

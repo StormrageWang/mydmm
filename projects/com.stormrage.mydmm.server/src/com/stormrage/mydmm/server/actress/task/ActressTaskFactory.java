@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.actress.request;
+package com.stormrage.mydmm.server.actress.task;
 
 import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;

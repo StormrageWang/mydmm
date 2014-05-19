@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.actress.request;
+package com.stormrage.mydmm.server.actress.task;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,15 +17,15 @@ import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.actress.ActressDAO;
 import com.stormrage.mydmm.server.picture.PictureBean;
 import com.stormrage.mydmm.server.picture.PictureDAO;
-import com.stormrage.mydmm.server.request.RequestFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
+import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.utils.StringUtils;
-import com.stormrage.mydmm.server.workfind.request.WorkFindTaskFactory;
+import com.stormrage.mydmm.server.workfind.task.WorkFindTaskFactory;
 
 /**
  * 从获取演员信息的需要分发的请求任务
@@ -39,7 +39,7 @@ public class ActressTask implements IDispatchTask {
 	
 	private static Logger logger = LogManager.getLogger();
 	private Set<String> workFindUrlSet = new HashSet<String>(10);
-	private DispatchTaskFactoryManager factoryManager = RequestFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private ActressBean actressBean;
 	private PictureBean pictureBean;
 	
