@@ -14,8 +14,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.stormrage.mydmm.server.utils.Guid;
-
 /**
  * 任务工具类
  * @author StormrageWang
@@ -153,13 +151,6 @@ public class TaskUtils {
 		} finally {
 			outputStream.close();
 		}
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(Guid.newGuid());
-		System.out.println(Guid.newGuid().length());
-		String url = "http://www.unblockdmm.com/browse.php?u=http%3A%2F%2Fwww.dmm.co.jp%2Fdigital%2Fvideoa%2F-%2Fdetail%2F%3D%2Fcid%3Dmibd00725%2F&b=0";
-		System.out.println(url.length());
 	}
 	
 }

@@ -4,7 +4,8 @@ public enum WorkPageType {
 
 	ANIMATION("動画", 1), 
 	MAIL_ORDER("通販", 2),
-    NUKNOWN("未定", 0);
+	SINGLE_RENT("单项出租", 3),
+    UNDEFINE("未定", 0);
     private String name;
     private int index;
 
@@ -28,7 +29,10 @@ public enum WorkPageType {
     	if(index == MAIL_ORDER.index){
     		return MAIL_ORDER;
     	}
-    	return NUKNOWN;
+    	if(index == SINGLE_RENT.index){
+    		return SINGLE_RENT;
+    	}
+    	return UNDEFINE;
     }
     
 }

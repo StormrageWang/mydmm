@@ -3,6 +3,7 @@ package com.stormrage.mydmm.server.work;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.stormrage.mydmm.server.workfind.WorkActressType;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 
@@ -22,7 +23,8 @@ public class WorkBean {
 	private String coverGuid;//封面小图
 	private String fullCoverGuid;//封面大图
 	private String url;
-	private WorkPageType pageType;
+	private WorkPageType pageType = WorkPageType.UNDEFINE;
+	private WorkActressType actressType = WorkActressType.UNDEFINE;
 	
 	public String getGuid() {
 		return guid;
@@ -95,6 +97,14 @@ public class WorkBean {
 	
 	public void setPageType(WorkPageType pageType) {
 		this.pageType = pageType;
+	}
+	
+	public WorkActressType getActressType() {
+		return actressType;
+	}
+	
+	public void setActressType(WorkActressType actressType) {
+		this.actressType = actressType;
 	}
 	
 	public String getUrl() {

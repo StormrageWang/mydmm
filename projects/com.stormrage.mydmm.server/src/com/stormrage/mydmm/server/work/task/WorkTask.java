@@ -53,13 +53,14 @@ public class WorkTask implements IDispatchTask {
 	
 	@Override
 	public String getName() {
-		return "获取作品【" + workBean.getTitle() + "】详细信息";
+		return "获取作品【" + workTitle + "】详细信息";
 	}
 
 	@Override
 	public void run() {
 		logger.info("开始执行获取作品信息任务");
 		workBean = new WorkBean();
+		workBean.setGuid(Guid.newGuid());
 		workBean.setTitle(workTitle);
 		workBean.setPageType(pageType);
 		workBean.setUrl(url);
@@ -101,6 +102,8 @@ public class WorkTask implements IDispatchTask {
 			WorkUtils.fullWorkByAnimationPage(workBean, doc);
 		} else if(workBean.getPageType() == WorkPageType.MAIL_ORDER) {
 			WorkUtils.fullWorkByMailOrderPage(workBean, doc);
+		} else if(workBean.getPageType() == WorkPageType.SINGLE_RENT){
+			WorkUtils.fullWorkBySingleRental(workBean, doc);
 		} else {
 			throw new TaskException("不支持从作品【" + workBean.getTitle() + "】的页面中获取信息", TaskErrorCode.TASK_ANALYTICS_GET);
 		}

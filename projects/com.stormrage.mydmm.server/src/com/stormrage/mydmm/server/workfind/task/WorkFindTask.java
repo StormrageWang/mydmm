@@ -11,12 +11,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.stormrage.mydmm.server.ConnectionProvider;
+import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
+import com.stormrage.mydmm.server.work.WorkActressDAO;
+import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.WorkDAO;
 import com.stormrage.mydmm.server.work.task.WorkFactory;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
@@ -77,15 +80,55 @@ public class WorkFindTask implements IDispatchTask {
 		logger.debug("开始添加作品链接任务接到任务队列");
 		int count = 0;
 		for(WorkFactory workFactory : workFactories){
+			if(workFactory == null){
+				continue;
+			}
 			String workTitle = workFactory.getWorkTitle();
-			if(workTitleExist(workTitle)){
+			WorkBean workBean = getWorkBeanByTitle(workTitle);
+			if(workBean != null){
 				logger.warn("作品【" + workTitle + "】已存在，不添加到作品链接任务队列");
+				if(existWorkActress(workBean.getGuid(), workTitle)){
+					logger.debug("【" + workTitle + "】已在演员【" + actressName + "】的作品中，不添加关联关系");
+				} else {
+					logger.debug("【" + workTitle + "】不在演员【" + actressName + "】的作品中，添加关联关系");
+					addWorkToActress(workBean.getGuid(), workTitle);
+				}
 			} else {
 				factoryManager.addDispatchFactory(workFactory);
 				count ++;
 			}
 		}
 		logger.debug("添加作品链接任务接到任务队列完成，共添加了" + count + "个");
+	}
+	
+	private boolean existWorkActress(String workGuid, String workTitle) throws TaskException {
+		try{
+			Connection conn = ConnectionProvider.getInstance().open();
+			try{
+				return WorkActressDAO.existWorkActress(conn, workGuid, actressGuid);
+			} finally {
+				conn.close();
+			}
+		} catch(SQLException e) {
+			throw new TaskException("判断【" + workTitle + "】是否在演员【" + actressName + "】的作品中时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
+		}
+	}
+	
+	private void addWorkToActress(String workGuid, String workTitle) throws TaskException{
+		logger.debug("添加【" + workTitle + "】到演员【" + actressName + "】的作品中");
+		ActressBean actressBean = new ActressBean();
+		actressBean.setGuid(actressGuid);
+		try{
+			Connection conn = ConnectionProvider.getInstance().open();
+			try{
+				WorkActressDAO.addWorkActress(conn, workGuid, new ActressBean[]{actressBean});
+			} finally {
+				conn.close();
+			}
+		} catch(SQLException e) {
+			throw new TaskException("添加作品【" + workTitle + "】到演员【" + actressName + "】的作品中时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
+		}
+		logger.debug("添加【" + workTitle + "】到演员【" + actressName + "】的作品中完成");
 	}
 	
 	private void fillWorksByTable(Element workTable) throws TaskException {
@@ -103,19 +146,24 @@ public class WorkFindTask implements IDispatchTask {
 			String workTitle = titleLink.html();
 			Element animationLink = workTr.child(1).select("a").first();
 			Element mailOrderLink = workTr.child(4).select("a").first();
+			Element singleRentLink = workTr.child(5).select("a").first();
 			if(animationLink != null){
 				String workUrl = animationLink.attr("href");
 				workUrl = TaskUtils.decode(workUrl);
 				workUrl = TaskUtils.addHostUrl(workUrl);
-				workFactories[i] = new WorkFactory(actressGuid, 
-						workTitle, WorkPageType.ANIMATION, workUrl);
+				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.ANIMATION, workUrl);
 			} else if(mailOrderLink != null){
 				String workUrl = mailOrderLink.attr("href");
 				workUrl = TaskUtils.decode(workUrl);
 				workUrl = TaskUtils.addHostUrl(workUrl);
 				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.MAIL_ORDER, workUrl);
+			} else if(singleRentLink != null){
+				String workUrl = singleRentLink.attr("href");
+				workUrl = TaskUtils.decode(workUrl);
+				workUrl = TaskUtils.addHostUrl(workUrl);
+				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.SINGLE_RENT, workUrl);
 			} else {
-				logger.warn("不支持作品【" + workTitle + "】的链接页面格式，不添加到作品链接队列");
+				logger.warn("不支持作品列表【" + url + "】中作品【" + workTitle + "】的链接页面格式，不添加到作品链接队列");
 			}
 			i++;
 		}
@@ -125,15 +173,15 @@ public class WorkFindTask implements IDispatchTask {
 		logger.debug("解析演员的作品链接完成，共有" + workCount + "个");
 	}
 	
-	private boolean workTitleExist(String workTitle) throws TaskException{
+	private WorkBean getWorkBeanByTitle(String workTitle) throws TaskException{
 		try{
 			Connection conn = ConnectionProvider.getInstance().open();
 			try{
-				return WorkDAO.titleExist(conn, workTitle);
+				return WorkDAO.getByTitle(conn, workTitle);
 			} finally {
 				conn.close();
 			}
-		}catch(SQLException e){
+		} catch(SQLException e) {
 			throw new TaskException("判断作品【" + workTitle + "】是否存在时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
 	}

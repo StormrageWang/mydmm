@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.stormrage.mydmm.server.workfind.WorkActressType;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 
@@ -24,19 +25,20 @@ public class WorkDAO {
 	public static final String COLUMN_COVER_FULL_GUID = "COVER_FULL_GUID";
 	public static final String COLUMN_COVER_GUID = "COVER_GUID";
 	public static final String COLUMN_URL = "URL";
-	public static final String COLUMN_TYPE = "TYPE";
+	public static final String COLUMN_PAGE_TYPE = "PAGE_TYPE";
+	public static final String COLUMN_ACTRESS_TYPE = "ACTRESS_TYPE";
 	
 	private static final String SQL_INSERT = 
 			"INSERT INTO " + TABLE_NAME + "(" + COLUMN_GUID + ", " + COLUMN_TITLE + ", " + COLUMN_TITLE_FULL + ", " + COLUMN_TITLE_CH + ", " + 
 					COLUMN_CODE_FULL + ", " + COLUMN_CODE + ", " + COLUMN_DATE + ", " + COLUMN_TIME_LENGTH + ", " + 
 					COLUMN_COVER_FULL_GUID + ", " + COLUMN_COVER_GUID + ", " + 
-					COLUMN_URL + ", " + COLUMN_TYPE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+					COLUMN_URL + ", " + COLUMN_PAGE_TYPE + ", " + COLUMN_ACTRESS_TYPE + ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	private static final String SQL_GET_BY_TITLE = 
 			"SELECT "+ COLUMN_GUID + ", " + COLUMN_TITLE + ", " + COLUMN_TITLE_FULL + ", " + COLUMN_TITLE_CH + ", " + 
 					COLUMN_CODE_FULL + ", " + COLUMN_CODE + ", " + COLUMN_DATE + ", " + COLUMN_TIME_LENGTH + ", " + 
 					COLUMN_COVER_FULL_GUID + ", " + COLUMN_COVER_GUID + ", " + 
-					COLUMN_URL + ", " + COLUMN_TYPE + 
+					COLUMN_URL + ", " + COLUMN_PAGE_TYPE + ", " + COLUMN_ACTRESS_TYPE + 
 			" FROM " + TABLE_NAME + " WHERE " + COLUMN_TITLE + " =?";
 	
 	private static final String SQL_IF_TITLE_EXIST = 
@@ -56,6 +58,7 @@ public class WorkDAO {
 		workBean.setCoverGuid(rs.getString(10));
 		workBean.setUrl(rs.getString(11));
 		workBean.setPageType(WorkPageType.valueof(rs.getInt(12)));
+		workBean.setActressType(WorkActressType.valueof(rs.getInt(13)));
 		return workBean;
 	}
 	
@@ -74,6 +77,7 @@ public class WorkDAO {
 		ps.setString(10, workBean.getCoverGuid());
 		ps.setString(11, workBean.getUrl());
 		ps.setInt(12, workBean.getPageType().getIndex());
+		ps.setInt(13, workBean.getActressType().getIndex());
 		
 	}
 	
@@ -87,7 +91,7 @@ public class WorkDAO {
 		}
 	}
 	
-	public static boolean titleExist(Connection conn, String title) throws SQLException {
+	public static boolean existTitle(Connection conn, String title) throws SQLException {
 		PreparedStatement ps = conn.prepareStatement(SQL_IF_TITLE_EXIST);
 		try{
 			ps.setString(1, title);

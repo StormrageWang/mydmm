@@ -40,13 +40,14 @@ public class ActressTask implements IDispatchTask {
 	
 	private static Logger logger = LogManager.getLogger();
 	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
+	private String url;
 	private ActressBean actressBean;
 	private PictureBean pictureBean;
 	private Set<String> workFindUrlSet = new HashSet<String>(10);
 	private WorkFindTaskFactory[] workFindFactories;
 	
-	public ActressTask(ActressBean actressBean){
-		this.actressBean = actressBean;
+	public ActressTask(String url){
+		this.url = url;
 	}
 	
 	@Override
@@ -57,8 +58,10 @@ public class ActressTask implements IDispatchTask {
 	@Override
 	public void run() {
 		logger.info("开始执行演员信息获取任务");
+		actressBean = new ActressBean();
+		actressBean.setGuid(Guid.newGuid());
+		actressBean.setUrl(url);
 		try {
-			String url = actressBean.getUrl();
 			//打开连接
 			Document doc = TaskUtils.getDocument(url);
 			logger.debug("网页【" + url + "】打开成功");

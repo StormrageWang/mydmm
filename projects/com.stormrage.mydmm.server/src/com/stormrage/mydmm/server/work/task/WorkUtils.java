@@ -12,6 +12,7 @@ import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.utils.StringUtils;
 import com.stormrage.mydmm.server.work.WorkBean;
+import com.stormrage.mydmm.server.workfind.WorkActressType;
 
 
 /**
@@ -24,7 +25,6 @@ public class WorkUtils {
 	private static final String TIME_LENGTH_SUFFIX = "分";
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 	private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-	
 	
 	public static void fullWorkByAnimationPage(WorkBean workBean, Document doc) throws TaskException {
 		//基本信息
@@ -43,6 +43,11 @@ public class WorkUtils {
 		String codeStr = codeTr.child(1).html();
 		workBean.setFullCode(codeStr);
 		workBean.setCode(getSimpleCode(codeStr));
+		//演员类型
+		Element actressTr = infoTrs.get(5);
+		Elements actressLinks = actressTr.select("a");
+		int actressCount = actressLinks.size();
+		workBean.setActressType(getActressType(actressCount));
 
 	}
 	
@@ -63,7 +68,47 @@ public class WorkUtils {
 		String codeStr = codeTr.child(1).html();
 		workBean.setFullCode(codeStr);
 		workBean.setCode(getSimpleCode(codeStr));
+		//演员类型
+		Element actressTr = infoTrs.get(3);
+		Elements actressLinks = actressTr.select("a");
+		int actressCount = actressLinks.size();
+		workBean.setActressType(getActressType(actressCount));
 
+	}
+	
+	public static void fullWorkBySingleRental(WorkBean workBean, Document doc) throws TaskException {
+		//基本信息
+		Element infoTable = doc.select("table").get(2);
+		Elements infoTrs = infoTable.select("tr");
+		//日期
+		Element dateTr = infoTrs.get(0);
+		String dateStr = dateTr.child(1).html();
+		workBean.setDate(getDate(dateStr));
+		//时长
+		Element timeLengthTr = infoTrs.get(1);
+		String timeLengthStr = timeLengthTr.child(1).html();
+		workBean.setTimeLength(getTimeLength(timeLengthStr));
+		//番号
+		Element codeTr = infoTrs.get(8);
+		String codeStr = codeTr.child(1).html();
+		workBean.setFullCode(codeStr);
+		workBean.setCode(getSimpleCode(codeStr));
+		//演员类型
+		Element actressTr = infoTrs.get(2);
+		Elements actressLinks = actressTr.select("a");
+		int actressCount = actressLinks.size();
+		workBean.setActressType(getActressType(actressCount));
+	}
+	
+	public static WorkActressType getActressType(int actressCount){
+		if(actressCount == 1){
+			return WorkActressType.SINGLE;
+		} else if(actressCount > 1 && actressCount < 5){
+			return WorkActressType.SERVERAL;
+		} else if(actressCount > 4){
+			return WorkActressType.COLLECTION;
+		}
+		return WorkActressType.UNDEFINE;
 	}
 	
 	public static Date getDate(String dateStr) throws TaskException {
