@@ -1,5 +1,8 @@
 package com.stormrage.mydmm.server.task.dispatch;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 
 /**
@@ -9,9 +12,11 @@ package com.stormrage.mydmm.server.task.dispatch;
  */
 public class DefaultDispatchExceptionHandler implements IDispatchExceptionHandler {
 
+	private static Logger logger = LogManager.getLogger();
+	
 	@Override
 	public void handle(DispatchTaskException e) {
-		e.printStackTrace();
+		logger.error("任务分发出错：" + e.getMessage(), e);
 	}
 
 }

@@ -27,6 +27,24 @@ public class ActressDAO {
 			"SELECT " + COLUMN_GUID + ", "  + COLUMN_NAME + ", " + COLUMN_NAME_FULL + ", " + COLUMN_PICTURE_GUID + ", " + COLUMN_URL + 
 					" FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME  + " =?";
 	
+	private static ActressBean readResultSet(ResultSet rs) throws SQLException {
+		ActressBean actressBean = new ActressBean();
+		actressBean.setGuid(rs.getString(1));
+		actressBean.setName(rs.getString(2));
+		actressBean.setFullName(rs.getString(3));
+		actressBean.setPictureGuid(rs.getString(4));
+		actressBean.setUrl(rs.getString(5));
+		return actressBean;
+	}
+	
+	private static void writePreparedStatement(PreparedStatement ps, ActressBean actressBean) throws SQLException{
+		ps.setString(1, actressBean.getGuid());
+		ps.setString(2, actressBean.getName());
+		ps.setString(3, actressBean.getFullName());
+		ps.setString(4, actressBean.getPictureGuid());
+		ps.setString(5, actressBean.getUrl());
+	}
+	
 	/**
 	 * 添加演员
 	 * @param conn
@@ -36,11 +54,7 @@ public class ActressDAO {
 	public static void addActress(Connection conn, ActressBean actressBean) throws SQLException{
 		PreparedStatement ps = conn.prepareStatement(SQL_INSERT);
 		try {
-			ps.setString(1, actressBean.getGuid());
-			ps.setString(2, actressBean.getName());
-			ps.setString(3, actressBean.getFullName());
-			ps.setString(4, actressBean.getPictureGuid());
-			ps.setString(5, actressBean.getUrl());
+			writePreparedStatement(ps, actressBean);
 			ps.executeUpdate();
 		} finally {
 			ps.close();
@@ -61,12 +75,7 @@ public class ActressDAO {
 			ResultSet rs = ps.executeQuery();
 			try{
 				if(rs.next()){
-					ActressBean actressBean = new ActressBean();
-					actressBean.setGuid(rs.getString(1));
-					actressBean.setName(rs.getString(2));
-					actressBean.setFullName(rs.getString(3));
-					actressBean.setPictureGuid(rs.getString(4));
-					actressBean.setUrl(rs.getString(5));
+					ActressBean actressBean = readResultSet(rs);
 					return actressBean;
 				}
 				return null;
@@ -92,12 +101,7 @@ public class ActressDAO {
 			ResultSet rs = ps.executeQuery();
 			try{
 				if(rs.next()){
-					ActressBean actressBean = new ActressBean();
-					actressBean.setGuid(rs.getString(1));
-					actressBean.setName(rs.getString(2));
-					actressBean.setFullName(rs.getString(3));
-					actressBean.setPictureGuid(rs.getString(4));
-					actressBean.setUrl(rs.getString(5));
+					ActressBean actressBean = readResultSet(rs);
 					return actressBean;
 				}
 				return null;

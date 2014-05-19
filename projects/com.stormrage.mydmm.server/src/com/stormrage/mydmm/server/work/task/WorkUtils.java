@@ -42,7 +42,7 @@ public class WorkUtils {
 		Element codeTr = infoTrs.get(11);
 		String codeStr = codeTr.child(1).html();
 		workBean.setFullCode(codeStr);
-		workBean.setSimpleCode(getSimpleCode(codeStr));
+		workBean.setCode(getSimpleCode(codeStr));
 
 	}
 	
@@ -62,7 +62,7 @@ public class WorkUtils {
 		Element codeTr = infoTrs.get(9);
 		String codeStr = codeTr.child(1).html();
 		workBean.setFullCode(codeStr);
-		workBean.setSimpleCode(getSimpleCode(codeStr));
+		workBean.setCode(getSimpleCode(codeStr));
 
 	}
 	
@@ -131,18 +131,25 @@ public class WorkUtils {
 		return signStr + "-" + codeStr;
 	}
 	
-	public static boolean isLowerLetter(char c){
+	private static boolean isLowerLetter(char c){
 		if(c < 'a' || c > 'z'){
 			return false;
 		}
 		return true;
 	}
 	
-	public static boolean isNumber(char c){
+	private static boolean isNumber(char c){
 		if(c < '0' || c > '9'){
 			return false;
 		}
 		return true;
+	}
+	
+	public static String getFullPictureUrl(String pictureUrl){
+		int index = pictureUrl.lastIndexOf("-");
+		String prefix = pictureUrl.substring(0, index);
+		String suffix = pictureUrl.substring(index);
+		return prefix + "jp" + suffix;
 	}
 	
 }

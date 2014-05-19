@@ -16,10 +16,10 @@ public class WorkBean {
 	private String fullTitle;//作品具体的名称
 	private String chTitle;//中文名称
 	private String fullCode;//完整番号
-	private String simpleCode;//处理后的番号
+	private String code;//处理后的番号
 	private Date date;//作品完成时间
 	private int timeLength;//时长（分钟）
-	private String simpleCoverGuid;//封面小图
+	private String coverGuid;//封面小图
 	private String fullCoverGuid;//封面大图
 	private String url;
 	private WorkPageType pageType;
@@ -54,11 +54,11 @@ public class WorkBean {
 	public void setFullCode(String fullCode) {
 		this.fullCode = fullCode;
 	}
-	public String getSimpleCode() {
-		return simpleCode;
+	public String getCode() {
+		return code;
 	}
-	public void setSimpleCode(String simpleCode) {
-		this.simpleCode = simpleCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 	public Date getDate() {
 		return date;
@@ -73,17 +73,18 @@ public class WorkBean {
 		this.timeLength = timeLength;
 	}
 	
-	public String getSimpleCoverGuid() {
-		return simpleCoverGuid;
+	public String getCoverGuid() {
+		return coverGuid;
 	}
 	
-	public void setSimpleCoverGuid(String simpleCoverGuid) {
-		this.simpleCoverGuid = simpleCoverGuid;
+	public void setCoverGuid(String coverGuid) {
+		this.coverGuid = coverGuid;
 	}
 	
 	public String getFullCoverGuid() {
 		return fullCoverGuid;
 	}
+	
 	public void setFullCoverGuid(String fullCoverGuid) {
 		this.fullCoverGuid = fullCoverGuid;
 	}
@@ -104,7 +105,7 @@ public class WorkBean {
 	}
 	
 	public String getDescription(){
-		return  fullCode + " \t " + simpleCode + " \t " + title + 
+		return  fullCode + " \t " + code + " \t " + title + 
 				" \t " + sdf.format(date) + " \t " + timeLength + "\t" + url ;
 	}
 }

@@ -1,9 +1,7 @@
 package com.stormrage.mydmm.server.workfind.task;
 
-import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
-import com.stormrage.mydmm.server.workfind.WorkFindBean;
 
 /**
  * 获取作品列表的需要分发的请求任务工厂
@@ -12,22 +10,21 @@ import com.stormrage.mydmm.server.workfind.WorkFindBean;
  */
 public class WorkFindTaskFactory implements IDispatchTaskFactory {
 
-	private WorkFindBean workFindBean;
+	private String actressGuid;
+	private String actressName; 
+	private String url;
 	
-	public WorkFindTaskFactory(ActressBean actressBean, String url){
-		workFindBean = new WorkFindBean();
-		workFindBean.setUrl(url);
-		workFindBean.setActressBean(actressBean);
+	public WorkFindTaskFactory(String actressGuid, String actressName, String url){
+		this.actressGuid = actressGuid;
+		this.actressName = actressName;
+		this.url = url;
 	}
 	
-	public WorkFindBean getWorkFindBean() {
-		return workFindBean;
-	}
 
 
 	@Override
 	public IDispatchTask getTask() {
-		WorkFindTask workFindTask = new WorkFindTask(workFindBean);
+		WorkFindTask workFindTask = new WorkFindTask(actressGuid, actressName, url);
 		return workFindTask;
 	}
 

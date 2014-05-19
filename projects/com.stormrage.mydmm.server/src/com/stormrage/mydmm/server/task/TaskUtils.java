@@ -34,7 +34,7 @@ public class TaskUtils {
 	/**
 	 * 超时时间
 	 */
-	private static final int TIMEOUT = 30000;
+	private static final int TIMEOUT = 50000;
 	/**
 	 * 
 	 */

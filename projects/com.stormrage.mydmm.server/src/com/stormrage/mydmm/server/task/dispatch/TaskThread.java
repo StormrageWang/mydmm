@@ -8,15 +8,18 @@ package com.stormrage.mydmm.server.task.dispatch;
 public class TaskThread extends Thread {
 
 	private IDispatchTask task;
+	private DispatchThread dispatchThread;
 	
-	public TaskThread(IDispatchTask task){
+	public TaskThread(DispatchThread dispatchThread, IDispatchTask task){
 		this.task = task;
+		this.dispatchThread = dispatchThread;
 		this.setDaemon(true);
 		this.setName("任务【" + task.getName() + "】处理线程");
 	}
 	
 	public void run() {
 		task.run();
+		dispatchThread.releaseOneThread();
 	}
 
 }

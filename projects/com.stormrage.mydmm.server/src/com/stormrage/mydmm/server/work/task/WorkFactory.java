@@ -1,10 +1,7 @@
 package com.stormrage.mydmm.server.work.task;
 
-import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
-import com.stormrage.mydmm.server.utils.Guid;
-import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.workfind.WorkPageType;
 
 /**
@@ -14,21 +11,55 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
  */
 public class WorkFactory implements IDispatchTaskFactory{
 
-	private ActressBean actressBean;
-	private WorkBean workBean;
+	private String actressGuid;
+	private String workTitle;
+	private WorkPageType pageType;
+	private String url;
 	
-	public WorkFactory(ActressBean actressBean, String title, WorkPageType type, String url) {
-		this.actressBean = actressBean;
-		workBean = new WorkBean();
-		workBean.setGuid(Guid.newGuid());
-		workBean.setTitle(title);
-		workBean.setPageType(type);
-		workBean.setUrl(url);
+	public WorkFactory(String actressGuid, String workTitle, WorkPageType pageType, String url) {
+		this.actressGuid = actressGuid;
+		this.workTitle = workTitle;
+		this.pageType = pageType;
+		this.url = url;
 	}
+	
 	
 	@Override
 	public IDispatchTask getTask() {
-		return new WorkTask(actressBean, workBean);
+		return new WorkTask(actressGuid, workTitle, pageType, url);
 	}
 
+	public String getActressGuid() {
+		return actressGuid;
+	}
+
+	public void setActressGuid(String actressGuid) {
+		this.actressGuid = actressGuid;
+	}
+
+	public String getWorkTitle() {
+		return workTitle;
+	}
+
+	public void setWorkTitle(String workTitle) {
+		this.workTitle = workTitle;
+	}
+
+
+	public WorkPageType getPageType() {
+		return pageType;
+	}
+
+	public void setPageType(WorkPageType pageType) {
+		this.pageType = pageType;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
 }

@@ -17,4 +17,5 @@ public interface IDispatchTask {
 	 * 执行任务
 	 */
 	public void run();
+	
 }
