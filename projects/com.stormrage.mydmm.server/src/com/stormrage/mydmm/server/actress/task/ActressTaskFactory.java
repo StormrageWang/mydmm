@@ -1,6 +1,5 @@
 package com.stormrage.mydmm.server.actress.task;
 
-import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
 
@@ -11,16 +10,14 @@ import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
  */
 public class ActressTaskFactory implements IDispatchTaskFactory {
 
-	private ActressBean actressBean;
-	
+	private String url;
 	public ActressTaskFactory(String url){
-		actressBean = new ActressBean();
-		actressBean.setUrl(url);
+		this.url = url;
 	}
 	
 	@Override
 	public IDispatchTask getTask() {
-		return new ActressTask(actressBean);
+		return new ActressTask(url);
 	}
 
 }

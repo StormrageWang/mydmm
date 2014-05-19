@@ -53,13 +53,14 @@ public class WorkTask implements IDispatchTask {
 	
 	@Override
 	public String getName() {
-		return "获取作品【" + workBean.getTitle() + "】详细信息";
+		return "获取作品【" + workTitle + "】详细信息";
 	}
 
 	@Override
 	public void run() {
 		logger.info("开始执行获取作品信息任务");
 		workBean = new WorkBean();
+		workBean.setGuid(Guid.newGuid());
 		workBean.setTitle(workTitle);
 		workBean.setPageType(pageType);
 		workBean.setUrl(url);
