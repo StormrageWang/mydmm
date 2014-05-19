@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="OFF"> 
   <appenders> 
-    <Console name="Console" target="SYSTEM_OUT"> 
+    <Console name="ConsoleDetail" target="SYSTEM_OUT"> 
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n"/> 
-      <!-- %C{1}.%M:%L -->
     </Console> 
+    <File name="Console" fileName="e://logs/1.log">
+      <PatternLayout pattern ="%m%n">
+      </PatternLayout>
+    </File>
   </appenders> 
   <loggers> 
-    <root level="trace"> 
-      <appender-ref ref="Console"/> 
+    <root level="info"> 
+      <appender-ref ref="ConsoleDetail"/> 
     </root> 
   </loggers> 
 </configuration>

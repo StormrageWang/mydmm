@@ -14,12 +14,14 @@ public class WorkFactory implements IDispatchTaskFactory{
 	private String actressGuid;
 	private String workTitle;
 	private WorkPageType pageType;
+	private int workIndex;
 	private String url;
 	
-	public WorkFactory(String actressGuid, String workTitle, WorkPageType pageType, String url) {
+	public WorkFactory(String actressGuid, String workTitle, WorkPageType pageType, int workIndex, String url) {
 		this.actressGuid = actressGuid;
 		this.workTitle = workTitle;
 		this.pageType = pageType;
+		this.workIndex = workIndex;
 		this.url = url;
 	}
 	
@@ -33,16 +35,8 @@ public class WorkFactory implements IDispatchTaskFactory{
 		return actressGuid;
 	}
 
-	public void setActressGuid(String actressGuid) {
-		this.actressGuid = actressGuid;
-	}
-
 	public String getWorkTitle() {
 		return workTitle;
-	}
-
-	public void setWorkTitle(String workTitle) {
-		this.workTitle = workTitle;
 	}
 
 
@@ -50,8 +44,8 @@ public class WorkFactory implements IDispatchTaskFactory{
 		return pageType;
 	}
 
-	public void setPageType(WorkPageType pageType) {
-		this.pageType = pageType;
+	public int getWorkIndex() {
+		return workIndex;
 	}
 
 	public String getUrl() {

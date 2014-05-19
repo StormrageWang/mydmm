@@ -16,9 +16,7 @@ import com.stormrage.mydmm.server.picture.PictureDAO;
 import com.stormrage.mydmm.server.picture.PictureType;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
-import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
-import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkActressDAO;
@@ -35,7 +33,6 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
 public class WorkTask implements IDispatchTask {
 
 	private static Logger logger = LogManager.getLogger();
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private PictureBean simpleCoverBean, fullCoverBean;
 	private PictureBean[] previewPictureBeans = new PictureBean[0];
 	private String actressGuid;
@@ -66,7 +63,6 @@ public class WorkTask implements IDispatchTask {
 		workBean.setUrl(url);
 		try {
 			Document doc = TaskUtils.getDocument(url);
-			logger.debug("网页【" + url + "】打开成功");
 			//基本信息
 			fillBaseInfoByDocument(doc);
 			//封面信息
@@ -80,17 +76,7 @@ public class WorkTask implements IDispatchTask {
 			logger.info("获取作品信息任务执行完成");
 		} catch (TaskException e) {
 			logger.error("获取作品信息任务执行失败：" + e.getMessage(), e);
-			if(e.getErrorCode() == TaskErrorCode.TASK_REQUEST_IO){
-				//重试
-				reTry();
-			}
 		}
-	}
-	
-	private void reTry(){
-		logger.debug("作品列表链接【" + url + "】打开失败，重新添加到任务列表");
-		WorkFactory workFactory = new WorkFactory(actressGuid, workTitle, pageType, url);
-		factoryManager.addDispatchFactory(workFactory);
 	}
 	
 	private void fillBaseInfoByDocument(Document doc) throws TaskException {

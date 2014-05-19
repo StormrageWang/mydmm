@@ -31,22 +31,24 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
  */
 public class WorkFindTask implements IDispatchTask {
 
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private static Logger logger = LogManager.getLogger();
+	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
 	private String actressGuid;
 	private String actressName; 
 	private String url;
+	private int pageIndex;
 	private WorkFactory[] workFactories;
 	
-	public WorkFindTask(String actressGuid, String actressName, String url){
+	public WorkFindTask(String actressGuid, String actressName, int pageIndex, String url){
 		this.actressGuid = actressGuid;
 		this.actressName = actressName;
+		this.pageIndex = pageIndex;
 		this.url = url;
 	}
 	
 	@Override
 	public String getName() {
-		return "获取【" + actressName + "】作品列表";
+		return "获取【" + actressName + "】作品列表-" + pageIndex;
 	}
 
 	@Override
@@ -54,7 +56,6 @@ public class WorkFindTask implements IDispatchTask {
 		logger.info("开始执行作品链接获取任务");
 		try {
 			Document doc = TaskUtils.getDocument(url);
-			logger.debug("网页【" + url + "】打开成功");
 			Elements tables = doc.select("#mu table");
 			//解析出作品链接
 			Element workTable = tables.get(13);
@@ -64,25 +65,14 @@ public class WorkFindTask implements IDispatchTask {
 			logger.info("作品链接获取任务执行完成");
 		} catch (TaskException e) {
 			logger.error("作品链接获取任务执行失败：" + e.getMessage());
-			if(e.getErrorCode() == TaskErrorCode.TASK_REQUEST_IO){
-				reTry();
-			}
 		} 
 	}
 	
-	private void reTry() {
-		logger.debug("作品列表链接【" + url + "】打开失败，重新添加到任务列表");
-		WorkFindTaskFactory workFindTaskFactory = new WorkFindTaskFactory(actressGuid, actressName, url);
-		factoryManager.addDispatchFactory(workFindTaskFactory);
-	}
 	
 	private void addWorksToManager() throws TaskException{
 		logger.debug("开始添加作品链接任务接到任务队列");
 		int count = 0;
 		for(WorkFactory workFactory : workFactories){
-			if(workFactory == null){
-				continue;
-			}
 			String workTitle = workFactory.getWorkTitle();
 			WorkBean workBean = getWorkBeanByTitle(workTitle);
 			if(workBean != null){
@@ -129,6 +119,7 @@ public class WorkFindTask implements IDispatchTask {
 			throw new TaskException("添加作品【" + workTitle + "】到演员【" + actressName + "】的作品中时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
 		logger.debug("添加【" + workTitle + "】到演员【" + actressName + "】的作品中完成");
+		
 	}
 	
 	private void fillWorksByTable(Element workTable) throws TaskException {
@@ -151,26 +142,32 @@ public class WorkFindTask implements IDispatchTask {
 				String workUrl = animationLink.attr("href");
 				workUrl = TaskUtils.decode(workUrl);
 				workUrl = TaskUtils.addHostUrl(workUrl);
-				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.ANIMATION, workUrl);
+				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.ANIMATION, i + 1, workUrl);
+				i++;
 			} else if(mailOrderLink != null){
 				String workUrl = mailOrderLink.attr("href");
 				workUrl = TaskUtils.decode(workUrl);
 				workUrl = TaskUtils.addHostUrl(workUrl);
-				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.MAIL_ORDER, workUrl);
+				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.MAIL_ORDER, i + 1, workUrl);
+				i++;
 			} else if(singleRentLink != null){
 				String workUrl = singleRentLink.attr("href");
 				workUrl = TaskUtils.decode(workUrl);
 				workUrl = TaskUtils.addHostUrl(workUrl);
-				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.SINGLE_RENT, workUrl);
+				workFactories[i] = new WorkFactory(actressGuid, workTitle, WorkPageType.SINGLE_RENT, i + 1, workUrl);
+				i++;
 			} else {
 				logger.warn("不支持作品列表【" + url + "】中作品【" + workTitle + "】的链接页面格式，不添加到作品链接队列");
 			}
-			i++;
 		}
 		if(i != workCount){
 			throw new TaskException("解析演员的作品链接失败，应解析出【" + workCount + "】，只解析出了【" + i +  " 】", TaskErrorCode.TASK_ANALYTICS_UNMATCH);
 		}
 		logger.debug("解析演员的作品链接完成，共有" + workCount + "个");
+		//System.out.println(url);
+		//System.out.println(pageIndex);
+		//System.out.println(workTable.toString());
+		//System.out.println("\n");
 	}
 	
 	private WorkBean getWorkBeanByTitle(String workTitle) throws TaskException{

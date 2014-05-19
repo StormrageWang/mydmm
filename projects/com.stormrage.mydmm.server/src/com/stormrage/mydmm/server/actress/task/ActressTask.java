@@ -2,8 +2,6 @@ package com.stormrage.mydmm.server.actress.task;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +34,8 @@ import com.stormrage.mydmm.server.workfind.task.WorkFindTaskFactory;
 public class ActressTask implements IDispatchTask {
 
 	private static final String NAME_PREFIX = "&gt;";
+	private static final String LINK_TITLE_PRE = "前へ";
+	private static final String LINK_TITLE_NEXT = "次へ";	
 	private static final int PAGE_CAPACITY = 50;
 	
 	private static Logger logger = LogManager.getLogger();
@@ -43,7 +43,6 @@ public class ActressTask implements IDispatchTask {
 	private String url;
 	private ActressBean actressBean;
 	private PictureBean pictureBean;
-	private Set<String> workFindUrlSet = new HashSet<String>(10);
 	private WorkFindTaskFactory[] workFindFactories;
 	
 	public ActressTask(String url){
@@ -64,21 +63,23 @@ public class ActressTask implements IDispatchTask {
 		try {
 			//打开连接
 			Document doc = TaskUtils.getDocument(url);
-			logger.debug("网页【" + url + "】打开成功");
 			//解析出演员的名称
 			Elements tables = doc.select("#mu table");
 			Element actressNameTable = tables.get(0);
 			fillNameByTable(actressNameTable);
+			//解析出演员的图片
+			Element actressPictureTable = tables.get(2);
+			fillPictureByTable(actressPictureTable);
 			ActressBean oldBean = getActressBeanByName(actressBean.getName());
 			if(oldBean != null) {
 				logger.debug("演员存在，不解析演员的图片信息");
-				actressBean = oldBean;
+				//更新其guid信息
+				actressBean.setGuid(oldBean.getGuid());
+				actressBean.setPictureGuid(oldBean.getPictureGuid());
+				pictureBean.setGuid(oldBean.getPictureGuid());
 			} else {
 				//解析演员图片
 				logger.debug("演员不存在，解析演员的图片信息");
-				Element actressPictureTable = tables.get(2);
-				fillPictureByTable(actressPictureTable);
-				actressBean.setGuid(Guid.newGuid());
 				saveActress();
 			}
 			//解析出需要分析的作品发现链接
@@ -88,19 +89,8 @@ public class ActressTask implements IDispatchTask {
 			logger.info("演员信息获取任务执行完成");
 		} catch (TaskException e) {
 			logger.error("演员信息获取任务执行失败：" + e.getMessage(), e);
-			if(e.getErrorCode() == TaskErrorCode.TASK_REQUEST_IO){
-				reTry();
-			}
 		}
 	}
-	
-	private void reTry() {
-		String url =  actressBean.getUrl();
-		logger.debug("演员链接【" + url + "】打开失败，重新添加到任务列表");
-		ActressTaskFactory taskFactory = new ActressTaskFactory(actressBean.getUrl());
-		factoryManager.addDispatchFactory(taskFactory);
-	}
-	
 	
 	private void addWorkFindsToManager(){
 		logger.debug("开始添加作品列表链接任务接到任务队列");
@@ -126,25 +116,48 @@ public class ActressTask implements IDispatchTask {
 		}
 		//获取获取作品的链接
 		workFindFactories = new WorkFindTaskFactory[pageCount];
-		workFindUrlSet.add(actressBean.getUrl());
-		workFindFactories[0] = new WorkFindTaskFactory(actressBean.getGuid(), actressBean.getName(), actressBean.getUrl());
-		int i = 1;
 		Element findTd = findTds.get(1);
+		//当前页面
+		Element indexSpan = findTd.select("span.selected").first();
+		String indexStr = indexSpan.html();
+		int index = getIndexByStr(indexStr);
+		workFindFactories[0] = new WorkFindTaskFactory(actressBean.getGuid(), actressBean.getName(), index, actressBean.getUrl());
+		int i = 1;
 		Elements workFindUrlElements = findTd.select("a");
-		for(Element workFindUrlElement : workFindUrlElements){
-			String workFindUrl = workFindUrlElement.attr("href");
+		for(Element workFindLink : workFindUrlElements){
+			String workFindUrl = workFindLink.attr("href");
+			indexStr = workFindLink.html();
+			if(isTextLink(indexStr)){
+				continue;
+			}
+			index = getIndexByStr(indexStr);
 			workFindUrl = TaskUtils.decode(workFindUrl);
 			workFindUrl = TaskUtils.addHostUrl(workFindUrl);
-			if(!workFindUrlSet.contains(workFindUrl)){
-				workFindUrlSet.add(workFindUrl);
-				workFindFactories[i] = new WorkFindTaskFactory(actressBean.getGuid(), actressBean.getName(), workFindUrl);
-				i++;
-			}
+			workFindFactories[i] = new WorkFindTaskFactory(actressBean.getGuid(), actressBean.getName(), index, workFindUrl);
+			i++;
 		}
 		if(i != pageCount){
 			throw new TaskException("作品列表链接解析错误 ，应添加【" + pageCount + "】，只添加了【" + i +  " 】", TaskErrorCode.TASK_ANALYTICS_UNMATCH);
 		}
 		logger.debug("作品列表链接解析完成，共有" + pageCount + "个");
+	}
+	
+	private boolean isTextLink(String linkStr){
+		if(LINK_TITLE_PRE.equals(linkStr)
+				||LINK_TITLE_NEXT.equals(linkStr)){
+			return true;
+		}
+		return false;
+		
+	}
+	
+	private int getIndexByStr(String indexStr) throws TaskException {
+		try {
+			return Integer.valueOf(indexStr);
+		} catch (NumberFormatException e){
+			throw new TaskException("无法获取作品列表链接的序号", e, TaskErrorCode.TASK_ANALYTICS_GET);
+		}
+		
 	}
 	
 	private void fillNameByTable(Element actressNameTable) throws TaskException {

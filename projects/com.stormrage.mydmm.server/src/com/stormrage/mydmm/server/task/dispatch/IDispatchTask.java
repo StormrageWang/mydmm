@@ -5,8 +5,8 @@ package com.stormrage.mydmm.server.task.dispatch;
  * @author StormrageWang
  * @date 2014年5月18日
  */
-public interface IDispatchTask {
 
+public interface IDispatchTask {
 	/**
 	 * 获取任务名称
 	 * @return

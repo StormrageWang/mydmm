@@ -10,6 +10,8 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +40,9 @@ public class TaskUtils {
 	 */
 	private static final String DMM_HOST_URL = "http://www.unblockdmm.com";
 	private static final String PRIFIX_DRIECT = "/";
+	private static final int DEFAULT_RETRY_COUNT = 3;
+	private static Logger logger = LogManager.getLogger();
+	
 	/**
 	 * 解码
 	 * @param url
@@ -83,20 +88,40 @@ public class TaskUtils {
 	}
 	
 	/**
-	 * 根据url获取html内容
-	 * @param url 网络地址
-	 * @return html内容
+	 * @param url
+	 * @return
 	 * @throws TaskException
 	 */
-	public static Document getDocument(String url) throws TaskException{
-		decode(url);//转码
+	public static Document getDocument(String url) throws TaskException {
+		return getDocument(url, DEFAULT_RETRY_COUNT);
+	}
+	
+	/**
+	 * @param url
+	 * @param totalIndex
+	 * @return
+	 * @throws TaskException
+	 */
+	public static Document getDocument(String url, int totalIndex) throws TaskException {
+		logger.debug("连接到【" + url + "】，最多进行【" + totalIndex + "】次尝试");
+		return getDocumentWithRetry(url, 1, totalIndex);
+	}
+	
+	private static Document getDocumentWithRetry(String url, int currentIndex, int totalIndex) throws TaskException {
+		logger.debug("正在进行第【" + currentIndex + "】次网络连接");
 		Connection conn = Jsoup.connect(url);
 		conn.userAgent(USER_AGENT).timeout(TIMEOUT);
 		try {
 			Document document = conn.get();
+			logger.debug("第【" + currentIndex + "】次网络连接成功");
 			return document;
 		} catch (IOException e) {
-			throw new TaskException("请求【" + url + "】连接IO错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_IO);
+			if(currentIndex <= totalIndex){
+				logger.debug("第【" + currentIndex + "】次网络连接失败，进行重连");
+				return getDocumentWithRetry(url, currentIndex + 1, totalIndex);
+			} else {
+				throw new TaskException("请求【" + url + "】连接IO错误", e.fillInStackTrace(), TaskErrorCode.TASK_REQUEST_IO);
+			}
 		}
 	}
 	
