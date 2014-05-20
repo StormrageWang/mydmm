@@ -18,9 +18,6 @@ import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
-import com.stormrage.mydmm.server.task.status.EmptyStatusProvider;
-import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
-import com.stormrage.mydmm.server.task.status.TaskStatusManager;
 import com.stormrage.mydmm.server.work.WorkActressDAO;
 import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.WorkDAO;
@@ -41,7 +38,6 @@ public class WorkFindTask implements IDispatchTask {
 	private String url;
 	private int pageIndex;
 	private WorkFactory[] workFactories;
-	private ITaskFinishListener finishListener;
 	
 	public WorkFindTask(String actressGuid, String actressName, int pageIndex, String url){
 		this.actressGuid = actressGuid;
@@ -69,27 +65,13 @@ public class WorkFindTask implements IDispatchTask {
 			logger.info("作品链接获取任务执行完成");
 		} catch (TaskException e) {
 			logger.error("作品链接获取任务执行失败：" + e.getMessage());
-			finish();
 		} 
 	}
 	
-	private void finish(){
-		if(finishListener != null){
-			finishListener.finish();
-		}
-	}
 	
 	private void addWorksToManager() throws TaskException{
 		logger.debug("开始添加作品链接任务接到任务队列");
 		int count = 0;
-		TaskStatusManager statusManager = new TaskStatusManager(getName(), workFactories.length);
-		statusManager.setFinishListener(new ITaskFinishListener() {
-			
-			@Override
-			public void finish() {
-				finish();
-			}
-		});
 		for(WorkFactory workFactory : workFactories){
 			String workTitle = workFactory.getWorkTitle();
 			WorkBean workBean = getWorkBeanByTitle(workTitle);
@@ -101,11 +83,9 @@ public class WorkFindTask implements IDispatchTask {
 					logger.debug("【" + workTitle + "】不在演员【" + actressName + "】的作品中，添加关联关系");
 					addWorkToActress(workBean.getGuid(), workTitle);
 				}
-				statusManager.addStatusProvider(EmptyStatusProvider.getInstance());
 				//logger.error(pageIndex + "\t" + i + "\t" + workBean.getFullCode() + "\t" + workBean.getFullTitle() + "\t" + workTitle);
 			} else {
 				factoryManager.addDispatchFactory(workFactory);
-				statusManager.addStatusProvider(workFactory);
 				count ++;
 			}
 		}
@@ -198,10 +178,6 @@ public class WorkFindTask implements IDispatchTask {
 		} catch(SQLException e) {
 			throw new TaskException("判断作品【" + workTitle + "】是否存在时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
-	}
-	
-	public void setFinishListener(ITaskFinishListener finishListener) {
-		this.finishListener = finishListener;
 	}
 
 }

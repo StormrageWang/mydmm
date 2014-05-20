@@ -18,7 +18,6 @@ import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
-import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkActressDAO;
 import com.stormrage.mydmm.server.work.WorkBean;
@@ -41,7 +40,6 @@ public class WorkTask implements IDispatchTask {
 	private WorkPageType pageType;
 	private String url;
 	private WorkBean workBean;
-	private ITaskFinishListener finishListener;
 	
 	public WorkTask(String actressGuid, String workTitle, WorkPageType pageType, String url) {
 		this.actressGuid = actressGuid;
@@ -65,6 +63,10 @@ public class WorkTask implements IDispatchTask {
 		workBean.setUrl(url);
 		try {
 			Document doc = TaskUtils.getDocument(url);
+			if(doc.select("h1").size() == 0){
+				logger.warn("页面【" + url + "】不是标准的作品信息页面，不获取作品详细信息");
+				return;
+			}
 			//基本信息
 			fillBaseInfoByDocument(doc);
 			//封面信息
@@ -78,19 +80,7 @@ public class WorkTask implements IDispatchTask {
 			logger.info("获取作品信息任务执行完成");
 		} catch (TaskException e) {
 			logger.error("获取作品信息任务执行失败：" + e.getMessage(), e);
-		} finally {
-			finish();
-		}
-	}
-	
-	private void finish(){
-		if(finishListener != null){
-			finishListener.finish();
-		}
-	}
-	
-	public void setFinishListener(ITaskFinishListener finishListener) {
-		this.finishListener = finishListener;
+		} 
 	}
 	
 	private void fillBaseInfoByDocument(Document doc) throws TaskException {
@@ -123,15 +113,20 @@ public class WorkTask implements IDispatchTask {
 		//大图
 		Element fullCoverLink =  coverDiv.select("a").first();
 		if(fullCoverLink == null){
-			logger.warn("无法解析出作品的封面大图");
-			return;
+			logger.warn("无法解析出作品的封面大图，将大图置空");
+			fullCoverBean = new PictureBean();
+			fullCoverBean.setGuid(Guid.newGuid());
+			fullCoverBean.setUrl(PictureBean.EMPTY_URL);
+			fullCoverBean.setType(PictureType.BIG);
+			workBean.setFullCoverGuid(fullCoverBean.getGuid());
+		} else {
+			String fullCoverUrl = fullCoverLink.attr("href");
+			fullCoverBean = new PictureBean();
+			fullCoverBean.setGuid(Guid.newGuid());
+			fullCoverBean.setUrl(fullCoverUrl);
+			fullCoverBean.setType(PictureType.BIG);
+			workBean.setFullCoverGuid(fullCoverBean.getGuid());
 		}
-		String fullCoverUrl = fullCoverLink.attr("href");
-		fullCoverBean = new PictureBean();
-		fullCoverBean.setGuid(Guid.newGuid());
-		fullCoverBean.setUrl(fullCoverUrl);
-		fullCoverBean.setType(PictureType.BIG);
-		workBean.setFullCoverGuid(fullCoverBean.getGuid());
 		logger.debug("解析作品的封面信息完成");
 	}
 	
@@ -169,13 +164,7 @@ public class WorkTask implements IDispatchTask {
 			Connection conn = ConnectionProvider.getInstance().open();
 			try{
 				conn.setAutoCommit(false);
-				PictureBean[] coverBeans = new PictureBean[0];
-				if(fullCoverBean == null){
-					coverBeans = new PictureBean[]{simpleCoverBean};
-				} else {
-					coverBeans = new PictureBean[]{simpleCoverBean, fullCoverBean};
-				}
-				PictureDAO.addPictures(conn, coverBeans);
+				PictureDAO.addPictures(conn, new PictureBean[]{simpleCoverBean, fullCoverBean});
 				WorkDAO.addWork(conn, workBean);
 				PictureDAO.addPictures(conn, previewPictureBeans);
 				WorkPreviewDAO.addWorkPreviews(conn, workBean.getGuid(), previewPictureBeans);

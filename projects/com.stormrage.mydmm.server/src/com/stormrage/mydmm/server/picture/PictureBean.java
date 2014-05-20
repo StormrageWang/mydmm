@@ -6,10 +6,14 @@ package com.stormrage.mydmm.server.picture;
  * @date 2014年5月18日
  */
 public class PictureBean {
+	
+	public static final String EMPTY_URL = " ";
+	
 	private String guid;//guid
 	private PictureType type;//类型
 	private String url;//网络上的地址
 	private byte[] data;//数据
+	
 	
 	public String getGuid() {
 		return guid;

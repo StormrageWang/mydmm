@@ -2,8 +2,6 @@ package com.stormrage.mydmm.server.actress.task;
 
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
-import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
-import com.stormrage.mydmm.server.task.status.ITaskStatusProvider;
 import com.stormrage.mydmm.server.task.status.TaskStatus;
 
 /**
@@ -11,7 +9,7 @@ import com.stormrage.mydmm.server.task.status.TaskStatus;
  * @author StormrageWang
  * @date 2014年5月18日
  */
-public class ActressTaskFactory implements IDispatchTaskFactory, ITaskStatusProvider, ITaskFinishListener {
+public class ActressTaskFactory implements IDispatchTaskFactory {
 
 	private String url;
 	private TaskStatus taskStatus = TaskStatus.UN_FINISH;
@@ -23,18 +21,7 @@ public class ActressTaskFactory implements IDispatchTaskFactory, ITaskStatusProv
 	@Override
 	public IDispatchTask getTask() {
 		ActressTask actressTask = new ActressTask(url);
-		actressTask.setFinishListener(this);
 		return actressTask;
-	}
-
-	@Override
-	public void finish() {
-		taskStatus = TaskStatus.FINISH;
-	}
-
-	@Override
-	public TaskStatus getStatus() {
-		return taskStatus;
 	}
 
 }

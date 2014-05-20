@@ -138,12 +138,12 @@ public class WorkUtils {
 	public static String getSimpleCode(String fullCode) throws TaskException {
 		//从后往前分析
 		int startIndex = fullCode.length() - 1;
-		//如果已字符结尾，先去掉结尾的字符
+		//如果不是数字字符结尾，先去掉结尾的字符
 		char lastChar = fullCode.charAt(startIndex);
-		if(isLowerLetter(lastChar)){
+		if(!isNumber(lastChar)){
 			for( ; startIndex >= 0; startIndex--){
 				char c = fullCode.charAt(startIndex);
-				if(!isLowerLetter(c)){
+				if(isNumber(c)){
 					break;
 				} 
 			}
@@ -188,7 +188,7 @@ public class WorkUtils {
 	}
 	
 	private static boolean isLowerLetter(char c){
-		if(c < 'a' || c > 'z'){
+		if(isNumber(c)){
 			return false;
 		}
 		return true;

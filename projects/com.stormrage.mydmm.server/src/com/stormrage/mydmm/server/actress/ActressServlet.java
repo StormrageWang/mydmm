@@ -46,24 +46,8 @@ public class ActressServlet extends HttpServlet {
 		}
 		try {
 			actressUrl = TaskUtils.decode(actressUrl);
-			TaskStatusManager statusManager = new TaskStatusManager("获取演员所有信息", 1);
-			statusManager.setFinishListener(new ITaskFinishListener() {
-				
-				@Override
-				public void finish() {
-					logger.info("所有演员信息获取完成");
-					try {
-						logger.info("开始获取作品唯一信息");
-						int workCount = WorkDistinctUtils.distinct();
-						logger.info("获取作品唯一信息成功，共获取【" + workCount + "】个作品");
-					} catch (TorrentException e) {
-						logger.info("获取作品唯一信息失败：" + e.getMessage(), e, e.getErrorCode());
-					}
-				}
-			});
 			ActressTaskFactory actressFactory = new ActressTaskFactory(actressUrl);
 			factoryManager.addDispatchFactory(actressFactory);
-			statusManager.addStatusProvider(actressFactory);
 		} catch (TaskException e) {
 			e.printStackTrace();
 		}
