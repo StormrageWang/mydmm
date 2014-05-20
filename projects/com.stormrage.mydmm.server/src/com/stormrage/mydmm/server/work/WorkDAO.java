@@ -105,7 +105,7 @@ public class WorkDAO {
 				rs.close();
 			}
 		} finally{
-			
+			ps.close();
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class WorkDAO {
 				rs.close();
 			}
 		} finally{
-			
+			ps.close();
 		}
 	}
 	

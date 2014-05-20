@@ -48,7 +48,7 @@ public class WorkActressDAO {
 				rs.close();
 			}
 		} finally{
-			
+			ps.close();
 		}
 	}
 	

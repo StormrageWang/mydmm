@@ -83,7 +83,7 @@ public class ActressDAO {
 				rs.close();
 			}
 		} finally{
-			
+			ps.close();
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class ActressDAO {
 				rs.close();
 			}
 		} finally{
-			
+			ps.close();
 		}
 	}
 	
