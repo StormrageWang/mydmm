@@ -72,7 +72,7 @@ public class ActressTask implements IDispatchTask {
 			fillPictureByTable(actressPictureTable);
 			ActressBean oldBean = getActressBeanByName(actressBean.getName());
 			if(oldBean != null) {
-				logger.debug("演员存在，不解析演员的图片信息");
+				logger.debug("演员存在，不保存演员的信息");
 				//更新其guid信息
 				actressBean.setGuid(oldBean.getGuid());
 				actressBean.setPictureGuid(oldBean.getPictureGuid());

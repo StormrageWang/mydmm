@@ -4,14 +4,13 @@
     <Console name="ConsoleDetail" target="SYSTEM_OUT"> 
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n"/> 
     </Console> 
-    <File name="Console" fileName="e://logs/1.log">
-      <PatternLayout pattern ="%m%n">
-      </PatternLayout>
-    </File>
+    <Console name="Console" fileName="SYSTEM_OUT">
+      <PatternLayout pattern ="%m%n"></PatternLayout>
+    </Console>
   </appenders> 
   <loggers> 
-    <root level="info"> 
-      <appender-ref ref="ConsoleDetail"/> 
+    <root level="error"> 
+      <appender-ref ref="Console"/> 
     </root> 
   </loggers> 
 </configuration>

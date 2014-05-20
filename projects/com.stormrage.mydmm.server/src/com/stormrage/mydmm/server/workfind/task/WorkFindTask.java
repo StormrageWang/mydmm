@@ -72,6 +72,7 @@ public class WorkFindTask implements IDispatchTask {
 	private void addWorksToManager() throws TaskException{
 		logger.debug("开始添加作品链接任务接到任务队列");
 		int count = 0;
+		logger.error("第【" + pageIndex + "】页共有【" + workFactories.length + "】个作品");
 		for(WorkFactory workFactory : workFactories){
 			String workTitle = workFactory.getWorkTitle();
 			WorkBean workBean = getWorkBeanByTitle(workTitle);
@@ -83,6 +84,7 @@ public class WorkFindTask implements IDispatchTask {
 					logger.debug("【" + workTitle + "】不在演员【" + actressName + "】的作品中，添加关联关系");
 					addWorkToActress(workBean.getGuid(), workTitle);
 				}
+				//logger.error(pageIndex + "\t" + i + "\t" + workBean.getFullCode() + "\t" + workBean.getFullTitle() + "\t" + workTitle);
 			} else {
 				factoryManager.addDispatchFactory(workFactory);
 				count ++;
