@@ -9,8 +9,8 @@
     </Console>
   </appenders> 
   <loggers> 
-    <root level="error"> 
-      <appender-ref ref="Console"/> 
+    <root level="info"> 
+      <appender-ref ref="ConsoleDetail"/> 
     </root> 
   </loggers> 
 </configuration>
