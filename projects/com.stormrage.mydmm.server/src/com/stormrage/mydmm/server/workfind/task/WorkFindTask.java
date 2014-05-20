@@ -69,9 +69,15 @@ public class WorkFindTask implements IDispatchTask {
 			logger.info("作品链接获取任务执行完成");
 		} catch (TaskException e) {
 			logger.error("作品链接获取任务执行失败：" + e.getMessage());
+			finish();
 		} 
 	}
 	
+	private void finish(){
+		if(finishListener != null){
+			finishListener.finish();
+		}
+	}
 	
 	private void addWorksToManager() throws TaskException{
 		logger.debug("开始添加作品链接任务接到任务队列");
@@ -81,10 +87,7 @@ public class WorkFindTask implements IDispatchTask {
 			
 			@Override
 			public void finish() {
-				if(finishListener != null){
-					//logger.info("所有作品信息任务获取完成");
-					finishListener.finish();
-				}
+				finish();
 			}
 		});
 		for(WorkFactory workFactory : workFactories){

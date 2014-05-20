@@ -92,6 +92,13 @@ public class ActressTask implements IDispatchTask {
 			logger.info("演员信息获取任务执行完成");
 		} catch (TaskException e) {
 			logger.error("演员信息获取任务执行失败：" + e.getMessage(), e);
+			finish();
+		}
+	}
+	
+	private void finish(){
+		if(finishListener != null){
+			finishListener.finish();
 		}
 	}
 	
@@ -103,8 +110,7 @@ public class ActressTask implements IDispatchTask {
 			@Override
 			public void finish() {
 				if(finishListener != null){
-					//logger.info("所有获取作品列表信息任务完成");
-					finishListener.finish();
+					finish();
 				}
 			}
 		});

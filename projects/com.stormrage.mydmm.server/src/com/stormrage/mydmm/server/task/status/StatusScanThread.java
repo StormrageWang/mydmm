@@ -10,7 +10,7 @@ public class StatusScanThread extends Thread {
 	public StatusScanThread(TaskStatusManager statusManager) {
 		super();
 		this.statusManager = statusManager;
-		setName("【" + statusManager.getName() +  "】任务状态管理扫面线程");
+		setName("【" + statusManager.getName() +  "】任务状态管理扫描线程");
 		setDaemon(true);
 	}
 	
@@ -23,7 +23,6 @@ public class StatusScanThread extends Thread {
 			} catch (InterruptedException e) {
 				TaskStatusException ex = new TaskStatusException("任务状态管理扫面线程中断异常", e, TaskStatusErrorCode.RUNNINF_INTERRUPT);
 				statusManager.handleStatusException(ex);
-				e.printStackTrace();
 			}
 		}
 	}

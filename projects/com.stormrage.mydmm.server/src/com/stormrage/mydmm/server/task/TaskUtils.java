@@ -116,7 +116,7 @@ public class TaskUtils {
 			logger.debug("第【" + currentIndex + "】次网络连接成功");
 			return document;
 		} catch (IOException e) {
-			if(currentIndex <= totalIndex){
+			if(currentIndex < totalIndex){
 				logger.debug("第【" + currentIndex + "】次网络连接失败，进行重连");
 				return getDocumentWithRetry(url, currentIndex + 1, totalIndex);
 			} else {

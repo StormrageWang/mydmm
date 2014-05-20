@@ -4,7 +4,7 @@
     <Console name="ConsoleDetail" target="SYSTEM_OUT"> 
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n"/> 
     </Console>
-	<File name="FileDetail" fileName="e/1.log" append="false">
+	<File name="FileDetail" fileName="e:/logs/mydmm.log" append="false">
 		<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n" />
 	</File>
   </appenders> 

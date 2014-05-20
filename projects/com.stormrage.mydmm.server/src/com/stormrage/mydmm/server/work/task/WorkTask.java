@@ -75,10 +75,10 @@ public class WorkTask implements IDispatchTask {
 			fillPreviewByDiv(previewDiv);
 			//添加演员信息中
 			saveWork();
-			finish();
 			logger.info("获取作品信息任务执行完成");
 		} catch (TaskException e) {
 			logger.error("获取作品信息任务执行失败：" + e.getMessage(), e);
+		} finally {
 			finish();
 		}
 	}
