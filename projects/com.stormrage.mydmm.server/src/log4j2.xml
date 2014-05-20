@@ -3,14 +3,14 @@
   <appenders> 
     <Console name="ConsoleDetail" target="SYSTEM_OUT"> 
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n"/> 
-    </Console> 
-    <Console name="Console" fileName="SYSTEM_OUT">
-      <PatternLayout pattern ="%m%n"></PatternLayout>
     </Console>
+	<File name="FileDetail" fileName="e/1.log" append="false">
+		<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level [%t] - %m%n" />
+	</File>
   </appenders> 
   <loggers> 
-    <root level="info"> 
-      <appender-ref ref="ConsoleDetail"/> 
+    <root level="debug"> 
+      <appender-ref ref="FileDetail"/> 
     </root> 
   </loggers> 
 </configuration>

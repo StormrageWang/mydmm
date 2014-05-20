@@ -22,6 +22,8 @@ import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
+import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
+import com.stormrage.mydmm.server.task.status.TaskStatusManager;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.utils.StringUtils;
 import com.stormrage.mydmm.server.workfind.task.WorkFindTaskFactory;
@@ -44,6 +46,7 @@ public class ActressTask implements IDispatchTask {
 	private ActressBean actressBean;
 	private PictureBean pictureBean;
 	private WorkFindTaskFactory[] workFindFactories;
+	private ITaskFinishListener finishListener;
 	
 	public ActressTask(String url){
 		this.url = url;
@@ -51,7 +54,7 @@ public class ActressTask implements IDispatchTask {
 	
 	@Override
 	public String getName() {
-		return "演员信息获取任务";
+		return "获取演员信息";
 	}
 
 	@Override
@@ -94,9 +97,21 @@ public class ActressTask implements IDispatchTask {
 	
 	private void addWorkFindsToManager(){
 		logger.debug("开始添加作品列表链接任务接到任务队列");
+		TaskStatusManager statusManager = new TaskStatusManager(getName(), workFindFactories.length);
+		statusManager.setFinishListener(new ITaskFinishListener() {
+			
+			@Override
+			public void finish() {
+				if(finishListener != null){
+					//logger.info("所有获取作品列表信息任务完成");
+					finishListener.finish();
+				}
+			}
+		});
 		int count = 0;
 		for(WorkFindTaskFactory workFindTaskFactory : workFindFactories){
 			factoryManager.addDispatchFactory(workFindTaskFactory);
+			statusManager.addStatusProvider(workFindTaskFactory);
 			count++;
 		}
 		logger.debug("作品列表链接任务接到任务队列完成，共添加了" + count + "个");
@@ -221,6 +236,10 @@ public class ActressTask implements IDispatchTask {
 		}catch(SQLException e){
 			throw new TaskException("获取演员【" + actressName + "】信息时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
+	}
+	
+	public void setFinishListener(ITaskFinishListener finishListener) {
+		this.finishListener = finishListener;
 	}
 
 }

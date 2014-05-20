@@ -6,4 +6,6 @@ public class TorrentErrorCode {
 	
 	public static final int	UNDEFINE = 0x00100000;
 	
+	public static final int	SQL = 0x00100000;
+	
 }

@@ -18,6 +18,9 @@ import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
+import com.stormrage.mydmm.server.task.status.EmptyStatusProvider;
+import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
+import com.stormrage.mydmm.server.task.status.TaskStatusManager;
 import com.stormrage.mydmm.server.work.WorkActressDAO;
 import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.WorkDAO;
@@ -38,6 +41,7 @@ public class WorkFindTask implements IDispatchTask {
 	private String url;
 	private int pageIndex;
 	private WorkFactory[] workFactories;
+	private ITaskFinishListener finishListener;
 	
 	public WorkFindTask(String actressGuid, String actressName, int pageIndex, String url){
 		this.actressGuid = actressGuid;
@@ -72,7 +76,17 @@ public class WorkFindTask implements IDispatchTask {
 	private void addWorksToManager() throws TaskException{
 		logger.debug("开始添加作品链接任务接到任务队列");
 		int count = 0;
-		logger.error("第【" + pageIndex + "】页共有【" + workFactories.length + "】个作品");
+		TaskStatusManager statusManager = new TaskStatusManager(getName(), workFactories.length);
+		statusManager.setFinishListener(new ITaskFinishListener() {
+			
+			@Override
+			public void finish() {
+				if(finishListener != null){
+					//logger.info("所有作品信息任务获取完成");
+					finishListener.finish();
+				}
+			}
+		});
 		for(WorkFactory workFactory : workFactories){
 			String workTitle = workFactory.getWorkTitle();
 			WorkBean workBean = getWorkBeanByTitle(workTitle);
@@ -84,9 +98,11 @@ public class WorkFindTask implements IDispatchTask {
 					logger.debug("【" + workTitle + "】不在演员【" + actressName + "】的作品中，添加关联关系");
 					addWorkToActress(workBean.getGuid(), workTitle);
 				}
+				statusManager.addStatusProvider(EmptyStatusProvider.getInstance());
 				//logger.error(pageIndex + "\t" + i + "\t" + workBean.getFullCode() + "\t" + workBean.getFullTitle() + "\t" + workTitle);
 			} else {
 				factoryManager.addDispatchFactory(workFactory);
+				statusManager.addStatusProvider(workFactory);
 				count ++;
 			}
 		}
@@ -165,11 +181,7 @@ public class WorkFindTask implements IDispatchTask {
 		if(i != workCount){
 			throw new TaskException("解析演员的作品链接失败，应解析出【" + workCount + "】，只解析出了【" + i +  " 】", TaskErrorCode.TASK_ANALYTICS_UNMATCH);
 		}
-		logger.debug("解析演员的作品链接完成，共有" + workCount + "个");
-		//System.out.println(url);
-		//System.out.println(pageIndex);
-		//System.out.println(workTable.toString());
-		//System.out.println("\n");
+		logger.debug("解析演员的作品链接完成，共有" + workCount + "个");;
 	}
 	
 	private WorkBean getWorkBeanByTitle(String workTitle) throws TaskException{
@@ -183,6 +195,10 @@ public class WorkFindTask implements IDispatchTask {
 		} catch(SQLException e) {
 			throw new TaskException("判断作品【" + workTitle + "】是否存在时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
+	}
+	
+	public void setFinishListener(ITaskFinishListener finishListener) {
+		this.finishListener = finishListener;
 	}
 
 }
