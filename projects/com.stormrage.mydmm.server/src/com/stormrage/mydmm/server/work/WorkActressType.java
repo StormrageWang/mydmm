@@ -1,11 +1,10 @@
-package com.stormrage.mydmm.server.workfind;
+package com.stormrage.mydmm.server.work;
 
 public enum WorkActressType {
 
 	SINGLE("单体", 1),
 	SERVERAL("群演", 2),
-	COLLECTION("合集", 3),
-	UNDEFINE("未定", 0);
+	COLLECTION("合集", 3);
 	
     private String name;
     private int index;
@@ -33,6 +32,6 @@ public enum WorkActressType {
     	if(index == COLLECTION.index){
     		return COLLECTION;
     	}
-    	return UNDEFINE;
+    	return null;
     }
 }

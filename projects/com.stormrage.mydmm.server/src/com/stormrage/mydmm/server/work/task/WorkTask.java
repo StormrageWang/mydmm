@@ -6,24 +6,18 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import com.stormrage.mydmm.server.ConnectionProvider;
 import com.stormrage.mydmm.server.actress.ActressBean;
-import com.stormrage.mydmm.server.picture.PictureBean;
-import com.stormrage.mydmm.server.picture.PictureDAO;
-import com.stormrage.mydmm.server.picture.PictureType;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
-import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.work.WorkActressDAO;
 import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.WorkDAO;
-import com.stormrage.mydmm.server.work.WorkPreviewDAO;
-import com.stormrage.mydmm.server.workfind.WorkPageType;
+import com.stormrage.mydmm.server.work.WorkPictureBean;
+import com.stormrage.mydmm.server.work.WorkPictureDAO;
 
 /**
  * 获取作品信息的需要分发的请求任务
@@ -33,18 +27,16 @@ import com.stormrage.mydmm.server.workfind.WorkPageType;
 public class WorkTask implements IDispatchTask {
 
 	private static Logger logger = LogManager.getLogger();
-	private PictureBean simpleCoverBean, fullCoverBean;
-	private PictureBean[] previewPictureBeans = new PictureBean[0];
-	private String actressGuid;
+	private String actressName;
 	private String workTitle;
-	private WorkPageType pageType;
 	private String url;
 	private WorkBean workBean;
+	private WorkPictureBean simpleCoverBean, fullCoverBean;
+	private WorkPictureBean[] previewPictureBeans;
 	
-	public WorkTask(String actressGuid, String workTitle, WorkPageType pageType, String url) {
-		this.actressGuid = actressGuid;
+	public WorkTask(String actressName, String workTitle, String url) {
+		this.actressName = actressName;
 		this.workTitle = workTitle;
-		this.pageType = pageType;
 		this.url = url;
 	}
 	
@@ -55,108 +47,38 @@ public class WorkTask implements IDispatchTask {
 
 	@Override
 	public void run() {
-		logger.info("开始执行获取作品信息任务");
+		logger.info("开始执行" + getName() + "任务");
 		workBean = new WorkBean();
-		workBean.setGuid(Guid.newGuid());
 		workBean.setTitle(workTitle);
-		workBean.setPageType(pageType);
 		workBean.setUrl(url);
 		try {
-			Document doc = TaskUtils.getDocument(url);
-			if(doc.select("h1").size() == 0){
-				logger.warn("页面【" + url + "】不是标准的作品信息页面，不获取作品详细信息");
-				return;
-			}
-			//基本信息
-			fillBaseInfoByDocument(doc);
-			//封面信息
-			Element coverDiv = doc.select("#sample-video").first();
-			fillCoverByDiv(coverDiv);
-			//预览信息
-			Element previewDiv = doc.select("#sample-image-block").first();
-			fillPreviewByDiv(previewDiv);
-			//添加演员信息中
+			//解析作品详细信息
+			fillTaskBean();
+			//保存作品
 			saveWork();
-			logger.info("获取作品信息任务执行完成");
+			logger.info(getName() + "任务执行完成");
 		} catch (TaskException e) {
-			logger.error("获取作品信息任务执行失败：" + e.getMessage(), e);
+			logger.error(getName() + "任务执行失败：" + e.getMessage(), e, e.getErrorCode());
 		} 
 	}
 	
-	private void fillBaseInfoByDocument(Document doc) throws TaskException {
-		//获取名称信息：完整名称，日期，时长，完整番号，番号
+	private void fillTaskBean() throws TaskException {
+		logger.debug("开始解析作品信息");
+		Document doc = TaskUtils.getDocument(url);
+		//获取完整名称，完整番号，简单番号，日期，时长，演员类型
 		logger.debug("开始解析作品的基本信息");
-		String fullTitle = doc.select("h1").first().html();
-		workBean.setFullTitle(fullTitle);
-		if(workBean.getPageType() == WorkPageType.ANIMATION){
-			WorkUtils.fullWorkByAnimationPage(workBean, doc);
-		} else if(workBean.getPageType() == WorkPageType.MAIL_ORDER) {
-			WorkUtils.fullWorkByMailOrderPage(workBean, doc);
-		} else if(workBean.getPageType() == WorkPageType.SINGLE_RENT){
-			WorkUtils.fullWorkBySingleRental(workBean, doc);
-		} else {
-			throw new TaskException("不支持从作品【" + workBean.getTitle() + "】的页面中获取信息", TaskErrorCode.TASK_ANALYTICS_GET);
-		}
+		WorkUtils.fullBaseInfo(workBean, doc);
 		logger.debug("解析作品的基本信息完成");
+		logger.debug("开始解析作品的封面图");
+		simpleCoverBean = WorkUtils.getSimpleCover(doc);
+		fullCoverBean = WorkUtils.getFullCover(doc);
+		logger.debug("解析作品的封面图完成");
+		logger.debug("开始解析作品的预览图");
+		previewPictureBeans = WorkUtils.getPreviewPictures(doc);
+		logger.debug("解析作品的预览图完成");
+		logger.debug("解析作品信息完成");
 	}
 	
-	private void fillCoverByDiv(Element coverDiv){
-		logger.debug("开始解析作品的封面信息");
-		//小图
-		Element simpleCoverImage = coverDiv.select("img").first();
-		String simpleCoverUrl = simpleCoverImage.attr("src");
-		simpleCoverBean = new PictureBean();
-		simpleCoverBean.setGuid(Guid.newGuid());
-		simpleCoverBean.setUrl(simpleCoverUrl);
-		simpleCoverBean.setType(PictureType.GENERAL);
-		workBean.setCoverGuid(simpleCoverBean.getGuid());
-		//大图
-		Element fullCoverLink =  coverDiv.select("a").first();
-		if(fullCoverLink == null){
-			logger.warn("无法解析出作品的封面大图，将大图置空");
-			fullCoverBean = new PictureBean();
-			fullCoverBean.setGuid(Guid.newGuid());
-			fullCoverBean.setUrl(PictureBean.EMPTY_URL);
-			fullCoverBean.setType(PictureType.BIG);
-			workBean.setFullCoverGuid(fullCoverBean.getGuid());
-		} else {
-			String fullCoverUrl = fullCoverLink.attr("href");
-			fullCoverBean = new PictureBean();
-			fullCoverBean.setGuid(Guid.newGuid());
-			fullCoverBean.setUrl(fullCoverUrl);
-			fullCoverBean.setType(PictureType.BIG);
-			workBean.setFullCoverGuid(fullCoverBean.getGuid());
-		}
-		logger.debug("解析作品的封面信息完成");
-	}
-	
-	private void fillPreviewByDiv(Element previewDiv){
-		logger.debug("开始解析作品的预览信息");
-		if(previewDiv != null){
-			Elements pictureLinks = previewDiv.select("a");
-			previewPictureBeans = new PictureBean[pictureLinks.size() * 2];
-			int i = 0;
-			for(Element pictureLink : pictureLinks){
-				//小图
-				String smallUrl = pictureLink.children().first().attr("src");
-				PictureBean smallBean = new PictureBean();
-				smallBean.setGuid(Guid.newGuid());
-				smallBean.setUrl(smallUrl);
-				smallBean.setType(PictureType.SMALL);
-				previewPictureBeans[i] = smallBean;
-				i++;
-				//对应的大图
-				PictureBean bigBean = new PictureBean();
-				String bugUrl = WorkUtils.getFullPictureUrl(smallUrl);
-				bigBean.setGuid(Guid.newGuid());
-				bigBean.setUrl(bugUrl);
-				bigBean.setType(PictureType.BIG);
-				previewPictureBeans[i] = bigBean;
-				i++;
-			}
-		}
-		logger.debug("解析作品的预览信息完成");
-	}
 	
 	private void saveWork() throws TaskException {
 		logger.debug("开始保存作品信息");
@@ -164,21 +86,32 @@ public class WorkTask implements IDispatchTask {
 			Connection conn = ConnectionProvider.getInstance().open();
 			try{
 				conn.setAutoCommit(false);
-				PictureDAO.addPictures(conn, new PictureBean[]{simpleCoverBean, fullCoverBean});
+				//保存作品信息
+				logger.debug("保存作品");
 				WorkDAO.addWork(conn, workBean);
-				PictureDAO.addPictures(conn, previewPictureBeans);
-				WorkPreviewDAO.addWorkPreviews(conn, workBean.getGuid(), previewPictureBeans);
+				//保存作品封面图
+				logger.debug("保存作品封面图");
+				WorkPictureBean[] coverBeans = new WorkPictureBean[]{simpleCoverBean, fullCoverBean};
+				if(fullCoverBean != null){//大图没有
+					WorkPictureDAO.addPictures(conn, new WorkPictureBean[]{simpleCoverBean});
+				}
+				WorkPictureDAO.addPictures(conn, coverBeans);
+				//保存作品预览图
+				logger.debug("保存作品预览图");
+				WorkPictureDAO.addPictures(conn, previewPictureBeans);
+				//保存作品与演员的对应关系
+				logger.debug("保存作品与演员的对应关系");
 				ActressBean actressBean = new ActressBean();
-				actressBean.setGuid(actressGuid);
-				WorkActressDAO.addWorkActress(conn, workBean.getGuid(), new ActressBean[]{actressBean});
+				actressBean.setName(actressName);
+				WorkActressDAO.addWorkActress(conn, workBean.getCode(), new ActressBean[]{actressBean});
 				conn.commit();
+				logger.debug("作品信息保存完成");
 			} finally {
 				conn.close();
 			}
 		} catch(SQLException e){
 			throw new TaskException("保存演员信息时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
-		logger.debug("作品信息保存完成");
 	}
 		
 }

@@ -2,7 +2,7 @@ package com.stormrage.mydmm.server.torrent.work;
 
 import java.util.Date;
 
-import com.stormrage.mydmm.server.workfind.WorkActressType;
+import com.stormrage.mydmm.server.work.WorkActressType;
 
 public class WorkDistinctBean {
 

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.stormrage.mydmm.server.workfind.WorkActressType;
+import com.stormrage.mydmm.server.work.WorkActressType;
 
 public class WorkDistinctDAO {
 	

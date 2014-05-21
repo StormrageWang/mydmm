@@ -10,13 +10,11 @@ import com.stormrage.mydmm.server.task.dispatch.IDispatchTaskFactory;
  */
 public class WorkFindTaskFactory implements IDispatchTaskFactory {
 
-	private String actressGuid;
 	private String actressName; 
 	private int pageIndex;
 	private String url;
 	
-	public WorkFindTaskFactory(String actressGuid, String actressName, int pageIndex, String url){
-		this.actressGuid = actressGuid;
+	public WorkFindTaskFactory(String actressName, int pageIndex, String url){
 		this.actressName = actressName;
 		this.pageIndex = pageIndex;
 		this.url = url;
@@ -24,12 +22,12 @@ public class WorkFindTaskFactory implements IDispatchTaskFactory {
 
 	@Override
 	public IDispatchTask getTask() {
-		WorkFindTask workFindTask = new WorkFindTask(actressGuid, actressName, pageIndex, url);
+		WorkFindTask workFindTask = new WorkFindTask(actressName, pageIndex, url);
 		return workFindTask;
 	}
 	
-	public String getUrl() {
-		return url;
+	public void setActressName(String actressName) {
+		this.actressName = actressName;
 	}
-
+	
 }
