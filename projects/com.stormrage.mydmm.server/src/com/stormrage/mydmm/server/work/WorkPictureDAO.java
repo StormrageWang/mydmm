@@ -18,7 +18,7 @@ public class WorkPictureDAO {
 	private static final String COLUMNS = COLUMN_GUID + ", " +  COLUMN_WORK_CODE + ", " + COLUMN_TYPE + ", " + COLUMN_URL;
 	
 	private static final String SQL_INSERT = 
-			"INSERT INTO " + TABLE_NAME + "(" + COLUMNS + ") VALUES(?, ?, ?)";
+			"INSERT INTO " + TABLE_NAME + "(" + COLUMNS + ") VALUES(?, ?, ?, ?)";
 	
 	private static WorkPictureBean readResultSet(ResultSet rs) throws SQLException {
 		WorkPictureBean pictureBean = new WorkPictureBean();

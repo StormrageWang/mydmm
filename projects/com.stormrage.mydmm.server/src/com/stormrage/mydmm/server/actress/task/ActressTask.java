@@ -45,7 +45,7 @@ public class ActressTask implements IDispatchTask {
 
 	@Override
 	public void run() {
-		logger.info("开始执行" + getName() + "任务");
+		logger.info("开始执行任务");
 		actressBean = new ActressBean();
 		actressBean.setUrl(url);
 		try {
@@ -55,9 +55,10 @@ public class ActressTask implements IDispatchTask {
 			fillWorkFindFactories(doc);
 			saveActress();
 			addWorkFindsToManager();
-			logger.info("演员信息获取任务执行完成");
+			logger.info("任务执行完成");
 		} catch (TaskException e) {
-			logger.error("演员信息获取任务执行失败：" + e.getMessage(), e);
+			logger.error("任务执行失败：" + e.getMessage(), e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -117,6 +118,7 @@ public class ActressTask implements IDispatchTask {
 				ActressDAO.addActress(conn, actressBean);
 				logger.debug("开始保存演员【" + actressBean.getName() + "】的封面");
 				ActressPictureDAO.addPictures(conn, new ActressPictureBean[]{coverPictureBean});
+				conn.commit();
 				logger.debug("保存演员【" + actressBean.getName() + "】信息完成");
 			} finally {
 				conn.close();

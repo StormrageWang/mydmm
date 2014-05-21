@@ -47,7 +47,7 @@ public class WorkTask implements IDispatchTask {
 
 	@Override
 	public void run() {
-		logger.info("开始执行" + getName() + "任务");
+		logger.info("开始执行任务");
 		workBean = new WorkBean();
 		workBean.setTitle(workTitle);
 		workBean.setUrl(url);
@@ -56,9 +56,10 @@ public class WorkTask implements IDispatchTask {
 			fillTaskBean();
 			//保存作品
 			saveWork();
-			logger.info(getName() + "任务执行完成");
+			logger.info("任务执行完成");
 		} catch (TaskException e) {
-			logger.error(getName() + "任务执行失败：" + e.getMessage(), e, e.getErrorCode());
+			logger.error("任务执行失败：" + e.getMessage(), e, e.getErrorCode());
+			e.printStackTrace();
 		} 
 	}
 	
@@ -71,10 +72,17 @@ public class WorkTask implements IDispatchTask {
 		logger.debug("解析作品的基本信息完成");
 		logger.debug("开始解析作品的封面图");
 		simpleCoverBean = WorkUtils.getSimpleCover(doc);
+		simpleCoverBean.setWorkCode(workBean.getCode());
 		fullCoverBean = WorkUtils.getFullCover(doc);
+		if(fullCoverBean != null){
+			fullCoverBean.setWorkCode(workBean.getCode());
+		}
 		logger.debug("解析作品的封面图完成");
 		logger.debug("开始解析作品的预览图");
 		previewPictureBeans = WorkUtils.getPreviewPictures(doc);
+		for(WorkPictureBean pictureBean : previewPictureBeans){
+			pictureBean.setWorkCode(workBean.getCode());
+		}
 		logger.debug("解析作品的预览图完成");
 		logger.debug("解析作品信息完成");
 	}
@@ -93,7 +101,7 @@ public class WorkTask implements IDispatchTask {
 				logger.debug("保存作品封面图");
 				WorkPictureBean[] coverBeans = new WorkPictureBean[]{simpleCoverBean, fullCoverBean};
 				if(fullCoverBean != null){//大图没有
-					WorkPictureDAO.addPictures(conn, new WorkPictureBean[]{simpleCoverBean});
+					coverBeans = new WorkPictureBean[]{simpleCoverBean};
 				}
 				WorkPictureDAO.addPictures(conn, coverBeans);
 				//保存作品预览图

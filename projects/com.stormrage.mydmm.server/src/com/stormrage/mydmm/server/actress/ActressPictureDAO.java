@@ -10,7 +10,7 @@ public class ActressPictureDAO {
 	private static final String TABLE_NAME = "ACTRESS_PICTURE";
 	
 	private static final String COLUMN_GUID = "GUID";
-	private static final String COLUMN_ACTRESS_NAME = "NAME";
+	private static final String COLUMN_ACTRESS_NAME = "ACTRESS_NAME";
 	private static final String COLUMN_URL = "URL";
 	private static final String COLUMN_DATA = "DATA";
 	

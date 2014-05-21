@@ -10,7 +10,6 @@ import org.jsoup.select.Elements;
 
 import com.stormrage.mydmm.server.ConnectionProvider;
 import com.stormrage.mydmm.server.actress.ActressBean;
-import com.stormrage.mydmm.server.actress.ActressPictureBean;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskUtils;
@@ -35,7 +34,7 @@ public class WorkFindUtils {
 			Element titleLink = workTr.child(0).select("a").first();
 			String workTitle = titleLink.html();
 			Element workLink = null;
-			for(int i = 0; i <= 6; i++){
+			for(int i = 1; i <= 6; i++){
 				workLink = workTr.child(i).select("a").first();
 				if(workLink != null){
 					break;

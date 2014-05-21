@@ -40,16 +40,17 @@ public class WorkFindTask implements IDispatchTask {
 
 	@Override
 	public void run() {
-		logger.info("开始执行" + getName() + "任务");
+		logger.info("开始执行任务");
 		try {
 			Document doc = TaskUtils.getDocument(url);
 			//解析出列表中各个作品的详细信息链接
 			fillWorkFactories(doc);
 			//添加作品详细信息链接到队列
 			addWorksToManager();
-			logger.info(getName() + "任务执行完成");
+			logger.info("任务执行完成");
 		} catch (TaskException e) {
-			logger.error(getName() + "任务执行失败：" + e.getMessage());
+			logger.error("任务执行失败：" + e.getMessage());
+			e.printStackTrace();
 		} 
 	}
 	

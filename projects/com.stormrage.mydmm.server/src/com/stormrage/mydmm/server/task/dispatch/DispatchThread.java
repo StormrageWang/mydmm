@@ -73,7 +73,7 @@ public class DispatchThread extends Thread {
 	 * 处理分发异常
 	 * @param e 分发异常
 	 */
-	private void handleDispacthException(DispatchTaskException e){
+	protected void handleDispacthException(DispatchTaskException e){
 		IDispatchExceptionHandler handler = factoryManager.getDispatchExceptionHandler();
 		if(handler == null){
 			logger.error("任务分发出错：" + e.getMessage(), e);

@@ -42,4 +42,9 @@ public class DispatchTaskErrorCode {
 	 * 线程挂起失败
 	 */
 	public static int INTERRUPT_SLEEP = INTERRUPT_TAKE + 1;
+	
+	/**
+	 * 中断异常
+	 */
+	public static int UN_EXPECTED = 0x00300000;
 }

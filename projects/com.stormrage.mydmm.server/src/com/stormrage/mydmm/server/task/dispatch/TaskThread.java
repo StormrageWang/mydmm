@@ -18,8 +18,12 @@ public class TaskThread extends Thread {
 	}
 	
 	public void run() {
-		task.run();
-		dispatchThread.releaseOneThread();
+		try{
+			task.run();
+			dispatchThread.releaseOneThread();
+		} catch(Throwable e){
+			dispatchThread.handleDispacthException(new DispatchTaskException("任务【" + task.getName() + "】处理线程发生了未知异常", e));
+		}
 	}
 
 }
