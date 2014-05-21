@@ -50,6 +50,7 @@ public class WorkTask implements IDispatchTask {
 	public void run() {
 		logger.info("开始执行任务");
 		workBean = new WorkBean();
+		workBean.setGuid(Guid.newGuid());
 		workBean.setTitle(workTitle);
 		workBean.setUrl(url);
 		try {

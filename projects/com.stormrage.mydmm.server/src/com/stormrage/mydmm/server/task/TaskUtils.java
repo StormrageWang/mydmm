@@ -177,5 +177,8 @@ public class TaskUtils {
 			outputStream.close();
 		}
 	}
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 19044d8455f9fb8840269e3fb4d3cd8b2884baa0
 }

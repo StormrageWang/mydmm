@@ -45,8 +45,14 @@ public class ActressTask implements IDispatchTask {
 
 	@Override
 	public void run() {
+<<<<<<< HEAD
 		logger.info("开始执行任务");
 		actressBean = new ActressBean();
+=======
+		logger.info("开始执行演员信息获取任务");
+		actressBean = new ActressBean();
+		actressBean.setGuid(Guid.newGuid());
+>>>>>>> 19044d8455f9fb8840269e3fb4d3cd8b2884baa0
 		actressBean.setUrl(url);
 		try {
 			//打开连接
