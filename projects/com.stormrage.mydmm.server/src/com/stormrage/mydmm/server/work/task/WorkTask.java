@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import com.stormrage.mydmm.server.ConnectionProvider;
 import com.stormrage.mydmm.server.actress.ActressBean;
@@ -52,20 +53,25 @@ public class WorkTask implements IDispatchTask {
 		workBean.setTitle(workTitle);
 		workBean.setUrl(url);
 		try {
+			Document doc = TaskUtils.getDocument(url);
+			Elements infoTables = doc.select("table");
+			if(infoTables.size() < 3) {
+				//打开的页面不对
+				logger.warn("页面【" + url + "】未包含作品的基本信息，跳过解析该页面");
+				return;
+			}
 			//解析作品详细信息
-			fillTaskBean();
+			fillTaskBean(doc);
 			//保存作品
 			saveWork();
 			logger.info("任务执行完成");
-		} catch (TaskException e) {
-			logger.error("任务执行失败：" + e.getMessage(), e, e.getErrorCode());
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.error("任务执行失败：" + e.getMessage(), e);
 		} 
 	}
 	
-	private void fillTaskBean() throws TaskException {
+	private void fillTaskBean(Document doc) throws TaskException {
 		logger.debug("开始解析作品信息");
-		Document doc = TaskUtils.getDocument(url);
 		//获取完整名称，完整番号，简单番号，日期，时长，演员类型
 		logger.debug("开始解析作品的基本信息");
 		WorkUtils.fullBaseInfo(workBean, doc);

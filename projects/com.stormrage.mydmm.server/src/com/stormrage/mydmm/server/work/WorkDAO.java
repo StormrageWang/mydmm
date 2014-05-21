@@ -40,8 +40,8 @@ public class WorkDAO {
 		workBean.setChTitle(rs.getString(4));
 		workBean.setDate(rs.getDate(5));
 		workBean.setTimeLength(rs.getInt(6));
+		workBean.setActressType(WorkActressType.valueof(rs.getInt(7)));
 		workBean.setUrl(rs.getString(7));
-		workBean.setActressType(WorkActressType.valueof(rs.getInt(8)));
 		return workBean;
 	}
 	

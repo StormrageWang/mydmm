@@ -20,7 +20,7 @@ public class WorkActressDAO {
 			"INSERT INTO " + TABLE_NAME + "(" + COLUMNS + ") VALUES(?,?)";
 	
 	private static final String SQL_IS_WORK_ACTRESS_EXIST = 
-			"SELECT 1 FROM " + TABLE_NAME + " WHERE " + COLUMN_ACTRESS_NAME + " = ? AND " + COLUMN_ACTRESS_NAME + " = ?";
+			"SELECT 1 FROM " + TABLE_NAME + " WHERE " + COLUMN_WORK_CODE + " = ? AND " + COLUMN_ACTRESS_NAME + " = ?";
 	
 	public static void addWorkActress(Connection conn, String workCode, ActressBean[] actressBeans) throws SQLException {
 		PreparedStatement ps = conn.prepareStatement(SQL_INSERT);

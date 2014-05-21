@@ -62,12 +62,12 @@ public class WorkFindTask implements IDispatchTask {
 			String workTitle = workFactory.getWorkTitle();
 			WorkBean workBean = WorkFindUtils.getWorkBeanByTitle(workTitle);
 			if(workBean != null){
-				logger.warn("作品【" + workTitle + "】已存在，详细信息链接不添加到任务工厂队列");
-				if(WorkFindUtils.existWorkActress(actressName, workTitle)){
+				logger.warn("作品【" + workTitle + "】已存在，详细信息链接不添加到任务工厂队列，检查作品与演员有关联关系");
+				if(WorkFindUtils.existWorkActress(actressName, workBean.getCode())){
 					logger.debug("【" + workTitle + "】已在演员【" + actressName + "】的作品中，不添加关联关系");
 				} else {
 					logger.debug("【" + workTitle + "】不在演员【" + actressName + "】的作品中，添加关联关系");
-					WorkFindUtils.saveWorkToActress(actressName, workTitle);
+					WorkFindUtils.saveWorkToActress(actressName, workBean.getCode());
 					logger.debug("【" + workTitle + "】到演员【" + actressName + "】关联关系添加完成");
 				}
 			} else {

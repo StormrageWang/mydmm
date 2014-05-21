@@ -26,6 +26,7 @@ import com.stormrage.mydmm.server.work.WorkPictureType;
  */
 public class WorkUtils {
 	
+	private static final String EMPTY = "----";
 	private static final String TIME_LENGTH_SUFFIX = "分";
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
 	private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
@@ -44,6 +45,10 @@ public class WorkUtils {
 	 * @throws TaskException
 	 */
 	public static void fullBaseInfo(WorkBean workBean, Document doc) throws TaskException {
+		Elements infoTables = doc.select("table");
+		if(infoTables.size() < 3){
+			throw new TaskException("页面中未包含作品信息", TaskErrorCode.TASK_ANALYTICS_GET);
+		}
 		Element infoTable = doc.select("table").get(2);
 		Elements infoTrs = infoTable.select("tr");
 		//看每一行有没有需要的信息
@@ -195,15 +200,22 @@ public class WorkUtils {
 	}
 	
 	public static int getTimeLength(String fullStr) throws TaskException {
+		if(EMPTY.endsWith(fullStr)){
+			return -1;
+		}
 		int index = fullStr.indexOf(TIME_LENGTH_SUFFIX);
 		if(index < 0){
 			System.out.println(fullStr);
 		}
-		String timeLengthStr = fullStr.substring(0, index);
 		try{
-			return Integer.valueOf(timeLengthStr);
-		} catch (NumberFormatException e){
-			throw new TaskException("时长【" + timeLengthStr + "】无法转为数字", TaskErrorCode.TASK_ANALYTICS_GET);
+			String timeLengthStr = fullStr.substring(0, index);
+			try{
+				return Integer.valueOf(timeLengthStr);
+			} catch (NumberFormatException e){
+				throw new TaskException("时长【" + timeLengthStr + "】无法转为数字", TaskErrorCode.TASK_ANALYTICS_GET);
+			} 
+		} catch (IndexOutOfBoundsException e){
+			throw new TaskException("时长【" + fullStr + "】无法确定数字的未知", TaskErrorCode.TASK_ANALYTICS_GET);
 		}
 	}
 

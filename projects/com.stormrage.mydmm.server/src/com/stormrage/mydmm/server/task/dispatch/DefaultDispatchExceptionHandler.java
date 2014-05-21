@@ -17,6 +17,7 @@ public class DefaultDispatchExceptionHandler implements IDispatchExceptionHandle
 	@Override
 	public void handle(DispatchTaskException e) {
 		logger.error("任务分发出错：" + e.getMessage(), e);
+		e.printStackTrace();
 	}
 
 }

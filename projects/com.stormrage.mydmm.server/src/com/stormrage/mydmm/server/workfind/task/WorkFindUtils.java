@@ -83,16 +83,16 @@ public class WorkFindUtils {
 		}
 	}
 	
-	public static boolean existWorkActress(String actressName, String workTitle) throws TaskException {
+	public static boolean existWorkActress(String actressName, String workCode) throws TaskException {
 		try{
 			Connection conn = ConnectionProvider.getInstance().open();
 			try{
-				return WorkActressDAO.existWorkActress(conn, workTitle, actressName);
+				return WorkActressDAO.existWorkActress(conn, workCode, actressName);
 			} finally {
 				conn.close();
 			}
 		} catch(SQLException e) {
-			throw new TaskException("判断【" + workTitle + "】是否在演员【" + actressName + "】的作品中时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
+			throw new TaskException("判断【" + workCode + "】是否在演员【" + actressName + "】的作品中时操作数据库出错", e, TaskErrorCode.TASK_ANALYTICS_DATABASE);
 		}
 	}
 	
