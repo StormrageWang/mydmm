@@ -10,7 +10,7 @@
   </appenders> 
   <loggers> 
     <root level="debug"> 
-      <appender-ref ref="ConsoleDetail"/> 
+      <appender-ref ref="FileDetail"/> 
     </root> 
   </loggers> 
 </configuration>
