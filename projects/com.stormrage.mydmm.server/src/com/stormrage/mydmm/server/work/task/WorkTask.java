@@ -65,6 +65,8 @@ public class WorkTask implements IDispatchTask {
 			//保存作品
 			saveWork();
 			logger.info("任务执行完成");
+		} catch(TaskException e) {
+			e.printStackTrace();
 		} catch (Throwable e) {
 			logger.error("任务执行失败：" + e.getMessage(), e);
 		} 
@@ -106,7 +108,7 @@ public class WorkTask implements IDispatchTask {
 				//保存作品封面图
 				logger.debug("保存作品封面图");
 				WorkPictureBean[] coverBeans = new WorkPictureBean[]{simpleCoverBean, fullCoverBean};
-				if(fullCoverBean != null){//大图没有
+				if(fullCoverBean == null){//大图没有
 					coverBeans = new WorkPictureBean[]{simpleCoverBean};
 				}
 				WorkPictureDAO.addPictures(conn, coverBeans);
