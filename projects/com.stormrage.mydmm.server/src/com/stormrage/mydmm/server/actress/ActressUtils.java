@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.actress.task;
+package com.stormrage.mydmm.server.actress;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,9 +9,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.stormrage.mydmm.server.ConnectionProvider;
-import com.stormrage.mydmm.server.actress.ActressBean;
-import com.stormrage.mydmm.server.actress.ActressDAO;
-import com.stormrage.mydmm.server.actress.ActressPictureBean;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskUtils;

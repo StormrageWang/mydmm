@@ -4,7 +4,8 @@ public enum WorkActressType {
 
 	SINGLE("单体", 1),
 	SERVERAL("群演", 2),
-	COLLECTION("合集", 3);
+	COLLECTION("合集", 3),
+	UN_KNOWN("未知", 4);
 	
     private String name;
     private int index;
@@ -31,6 +32,9 @@ public enum WorkActressType {
     	}
     	if(index == COLLECTION.index){
     		return COLLECTION;
+    	}
+    	if(index == UN_KNOWN.index){
+    		return UN_KNOWN;
     	}
     	return null;
     }

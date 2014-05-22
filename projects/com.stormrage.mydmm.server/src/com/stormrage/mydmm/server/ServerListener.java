@@ -8,8 +8,9 @@ import javax.servlet.ServletContextListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
+import com.stormrage.mydmm.server.task.TorrentTaskManagerInstance;
+import com.stormrage.mydmm.server.task.WorkTaskManagerInstance;
 import com.stormrage.mydmm.server.task.dispatch.DefaultDispatchExceptionHandler;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 
@@ -20,12 +21,15 @@ import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
  */
 public class ServerListener implements ServletContextListener {
 
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager workFactoryManager = WorkTaskManagerInstance.getInstance();
+	private DispatchTaskFactoryManager torrntentFactoryManager = TorrentTaskManagerInstance.getInstance();
+	
 	private static Logger logger = LogManager.getLogger();
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
-		factoryManager.stopDispatch();
+		workFactoryManager.stopDispatch();
+		torrntentFactoryManager.stopDispatch();
 	}
 
 	@Override
@@ -39,8 +43,10 @@ public class ServerListener implements ServletContextListener {
 		//使用代理设置
 		TaskUtils.useProxy("127.0.0.1", "8087");
 		//添加需要访问的请求
-		factoryManager.setDispacthExceptionHandler(new DefaultDispatchExceptionHandler());
-		factoryManager.startDispatch();
+		workFactoryManager.setDispacthExceptionHandler(new DefaultDispatchExceptionHandler());
+		workFactoryManager.startDispatch();
+		torrntentFactoryManager.setDispacthExceptionHandler(new DefaultDispatchExceptionHandler());
+		torrntentFactoryManager.startDispatch();
 	}
 	
 }

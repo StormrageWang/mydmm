@@ -6,12 +6,13 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 
 import com.stormrage.mydmm.server.task.TaskException;
-import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
+import com.stormrage.mydmm.server.task.WorkTaskManagerInstance;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.task.WorkTaskFactory;
+import com.stormrage.mydmm.server.workfind.WorkFindUtils;
 
 /**
  * 获取作品列表的需要分发的请求任务
@@ -25,7 +26,7 @@ public class WorkFindTask implements IDispatchTask {
 	private String url;
 	private int pageIndex;
 	private WorkTaskFactory[] workFactories;
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = WorkTaskManagerInstance.getInstance();
 	
 	public WorkFindTask(String actressName, int pageIndex, String url){
 		this.actressName = actressName;

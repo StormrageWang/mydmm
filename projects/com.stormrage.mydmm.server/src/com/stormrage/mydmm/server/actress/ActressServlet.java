@@ -12,13 +12,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.stormrage.mydmm.server.actress.task.ActressTaskFactory;
 import com.stormrage.mydmm.server.task.TaskException;
-import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
+import com.stormrage.mydmm.server.task.WorkTaskManagerInstance;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
-import com.stormrage.mydmm.server.task.status.ITaskFinishListener;
-import com.stormrage.mydmm.server.task.status.TaskStatusManager;
-import com.stormrage.mydmm.server.torrent.TorrentException;
-import com.stormrage.mydmm.server.torrent.work.WorkDistinctUtils;
 import com.stormrage.mydmm.server.utils.StringUtils;
 
 /**
@@ -33,7 +29,7 @@ public class ActressServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 6963539265640976779L;
 	private static final String PARAMETER_NAME_ACTREE = "actressUrl";
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = WorkTaskManagerInstance.getInstance();
 	private static Logger logger = LogManager.getLogger();
 	
 	@Override

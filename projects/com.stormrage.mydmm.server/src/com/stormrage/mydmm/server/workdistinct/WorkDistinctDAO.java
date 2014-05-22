@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.torrent.work;
+package com.stormrage.mydmm.server.workdistinct;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,25 +12,25 @@ import com.stormrage.mydmm.server.work.WorkActressType;
 public class WorkDistinctDAO {
 	
 	private static final String SQL_DISTINCT = 
-			"INSERT INTO WORK_DISTINCT (CODE, TITLE, ACTRESS_TYPE, [DATE], LOCK) " + 
-			"SELECT T3.CODE, T3.TITLE, T3.ACTRESS_TYPE, T3.[DATE], 0  FROM WORK T3 \n" + 
-				"WHERE EXISTS(SELECT 1 FROM \n" + 
-				"	(SELECT MIN(GUID) AS [GUID] FROM \n" + 
-				"		(SELECT T1.GUID, T1.CODE FROM WORK T1 \n" + 
-				"			WHERE NOT EXISTS(SELECT 1 FROM WORK_DISTINCT T2 WHERE T1.CODE = T2.CODE)) T3 \n" + 
-				"				GROUP BY T3.CODE) T4 WHERE T4.GUID = T3.GUID)" ;
+			"INSERT INTO WORK_DISTINCT (CODE, TITLE, ACTRESS_TYPE, [DATE], LOCK) \n" + 
+			"SELECT T3.CODE_SIMPLE, T3.TITLE, T3.ACTRESS_TYPE, T3.[DATE], 0  FROM WORK T3 \n" + 
+			"	WHERE EXISTS(SELECT 1 FROM \n" + 
+			"	(SELECT MIN(CODE) AS CODE FROM \n" + 
+			"		(SELECT T1.CODE, T1.CODE_SIMPLE FROM WORK T1 \n" + 
+			"				WHERE NOT EXISTS(SELECT 1 FROM WORK_DISTINCT T2 WHERE T1.CODE_SIMPLE = T2.CODE)) T3 \n" + 
+			"						GROUP BY T3.CODE_SIMPLE) T4 WHERE T4.CODE = T3.CODE)" ;
 	
 	private static final String SQL_GET_TOP_TWENTY = 
 			"SELECT TOP 20 T1.CODE, T1.TITLE, T1.ACTRESS_TYPE, T1.[DATE] FROM WORK_DISTINCT T1 \n" + 
 			"	WHERE T1.LOCK = 0 AND NOT EXISTS (SELECT 1 FROM TORRENT T2 WHERE T1.CODE = T2.WORK_CODE) \n" + 
-			"	ORDER BY T1.ACTRESS_TYPE ";
+			"	ORDER BY T1.ACTRESS_TYPE, T1.[DATE]";
 	
 	private static final String SQL_LOCK_TOP_TWENTY = 
-			"UPDATE WORK_DISTINCT SET LOCK = 0 \n" +  
+			"UPDATE WORK_DISTINCT SET LOCK = 1 \n" +  
 			"WHERE CODE IN \n" + 
 			"(SELECT TOP 20 T1.CODE FROM WORK_DISTINCT T1 \n" + 
 			"	WHERE T1.LOCK = 0 AND NOT EXISTS (SELECT 1 FROM TORRENT T2 WHERE T1.CODE = T2.WORK_CODE) \n" + 
-			"	ORDER BY T1.ACTRESS_TYPE)";
+			"	ORDER BY T1.ACTRESS_TYPE, T1.[DATE])";
 	
 	private static final String SQL_UNLOCK_BY_CODE = 
 			"UPDATE WORK_DISTINCT SET LOCK = 0 WHERE CODE = ?";

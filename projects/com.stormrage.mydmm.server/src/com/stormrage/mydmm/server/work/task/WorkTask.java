@@ -19,6 +19,7 @@ import com.stormrage.mydmm.server.work.WorkBean;
 import com.stormrage.mydmm.server.work.WorkDAO;
 import com.stormrage.mydmm.server.work.WorkPictureBean;
 import com.stormrage.mydmm.server.work.WorkPictureDAO;
+import com.stormrage.mydmm.server.work.WorkUtils;
 
 /**
  * 获取作品信息的需要分发的请求任务
@@ -65,9 +66,10 @@ public class WorkTask implements IDispatchTask {
 			//保存作品
 			saveWork();
 			logger.info("任务执行完成");
-		} catch (Throwable e) {
+		} catch(TaskException e) {
+			e.printStackTrace();
 			logger.error("任务执行失败：" + e.getMessage(), e);
-		} 
+		}  
 	}
 	
 	private void fillTaskBean(Document doc) throws TaskException {
@@ -106,7 +108,7 @@ public class WorkTask implements IDispatchTask {
 				//保存作品封面图
 				logger.debug("保存作品封面图");
 				WorkPictureBean[] coverBeans = new WorkPictureBean[]{simpleCoverBean, fullCoverBean};
-				if(fullCoverBean != null){//大图没有
+				if(fullCoverBean == null){//大图没有
 					coverBeans = new WorkPictureBean[]{simpleCoverBean};
 				}
 				WorkPictureDAO.addPictures(conn, coverBeans);

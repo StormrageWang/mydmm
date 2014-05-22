@@ -12,10 +12,11 @@ import com.stormrage.mydmm.server.actress.ActressBean;
 import com.stormrage.mydmm.server.actress.ActressDAO;
 import com.stormrage.mydmm.server.actress.ActressPictureBean;
 import com.stormrage.mydmm.server.actress.ActressPictureDAO;
+import com.stormrage.mydmm.server.actress.ActressUtils;
 import com.stormrage.mydmm.server.task.TaskErrorCode;
 import com.stormrage.mydmm.server.task.TaskException;
-import com.stormrage.mydmm.server.task.TaskFactoryManagerInstance;
 import com.stormrage.mydmm.server.task.TaskUtils;
+import com.stormrage.mydmm.server.task.WorkTaskManagerInstance;
 import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
 import com.stormrage.mydmm.server.task.dispatch.IDispatchTask;
 import com.stormrage.mydmm.server.workfind.task.WorkFindTaskFactory;
@@ -28,7 +29,7 @@ import com.stormrage.mydmm.server.workfind.task.WorkFindTaskFactory;
 public class ActressTask implements IDispatchTask {
 
 	private static Logger logger = LogManager.getLogger();
-	private DispatchTaskFactoryManager factoryManager = TaskFactoryManagerInstance.getInstance();
+	private DispatchTaskFactoryManager factoryManager = WorkTaskManagerInstance.getInstance();
 	private String url;
 	private ActressBean actressBean;
 	private ActressPictureBean coverPictureBean;

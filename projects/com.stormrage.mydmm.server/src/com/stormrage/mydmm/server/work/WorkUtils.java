@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.work.task;
+package com.stormrage.mydmm.server.work;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,10 +13,6 @@ import com.stormrage.mydmm.server.task.TaskException;
 import com.stormrage.mydmm.server.task.TaskUtils;
 import com.stormrage.mydmm.server.utils.Guid;
 import com.stormrage.mydmm.server.utils.StringUtils;
-import com.stormrage.mydmm.server.work.WorkActressType;
-import com.stormrage.mydmm.server.work.WorkBean;
-import com.stormrage.mydmm.server.work.WorkPictureBean;
-import com.stormrage.mydmm.server.work.WorkPictureType;
 
 
 /**
@@ -187,7 +183,9 @@ public class WorkUtils {
 			return WorkActressType.SERVERAL;
 		} else if(actressCount > 4){
 			return WorkActressType.COLLECTION;
-		}
+		} else if(actressCount == 0){
+			return WorkActressType.UN_KNOWN;
+		} 
 		throw new TaskException("无法获取作品的演员类型，其演员个数为【" + actressCount + "】", TaskErrorCode.TASK_ANALYTICS_GET);
 	}
 	

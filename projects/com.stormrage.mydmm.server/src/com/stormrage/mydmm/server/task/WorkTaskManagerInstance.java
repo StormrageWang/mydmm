@@ -7,11 +7,11 @@ import com.stormrage.mydmm.server.task.dispatch.DispatchTaskFactoryManager;
  * @author StormrageWang
  * @date 2014年5月18日
  */
-public class TaskFactoryManagerInstance {
+public class WorkTaskManagerInstance {
 	
 	private static DispatchTaskFactoryManager factoryManager = new DispatchTaskFactoryManager("影片信息抓取");
 	
-	private TaskFactoryManagerInstance(){
+	private WorkTaskManagerInstance(){
 		
 	}
 	

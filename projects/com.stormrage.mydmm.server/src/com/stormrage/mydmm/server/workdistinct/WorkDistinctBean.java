@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.torrent.work;
+package com.stormrage.mydmm.server.workdistinct;
 
 import java.util.Date;
 
@@ -8,8 +8,8 @@ public class WorkDistinctBean {
 
 	private String code;
 	private String title;
-	private WorkActressType actressType;
 	private Date date;
+	private WorkActressType actressType;
 	
 	public String getCode() {
 		return code;
@@ -27,20 +27,20 @@ public class WorkDistinctBean {
 		this.title = title;
 	}
 	
-	public WorkActressType getActressType() {
-		return actressType;
-	}
-	
-	public void setActressType(WorkActressType actressType) {
-		this.actressType = actressType;
-	}
-	
 	public Date getDate() {
 		return date;
 	}
 	
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	
+	public WorkActressType getActressType() {
+		return actressType;
+	}
+	
+	public void setActressType(WorkActressType actressType) {
+		this.actressType = actressType;
 	}
 	
 }

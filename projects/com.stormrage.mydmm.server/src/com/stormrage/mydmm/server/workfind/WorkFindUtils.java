@@ -1,4 +1,4 @@
-package com.stormrage.mydmm.server.workfind.task;
+package com.stormrage.mydmm.server.workfind;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,6 +20,8 @@ import com.stormrage.mydmm.server.work.task.WorkTaskFactory;
 
 public class WorkFindUtils {
 
+	private static final int[] urlPriorityIndexs = {4, 5, 6, 1, 2, 3};
+	
 	public static WorkTaskFactory[] getWorkFactorys(Document doc) throws TaskException {
 		Element workTable = doc.select("#mu table").get(13);
 		Elements workTrs = workTable.select("tr");
@@ -34,8 +36,9 @@ public class WorkFindUtils {
 			Element titleLink = workTr.child(0).select("a").first();
 			String workTitle = titleLink.html();
 			Element workLink = null;
-			for(int i = 1; i <= 6; i++){
-				workLink = workTr.child(i).select("a").first();
+			for(int i = 0; i < 6; i++){
+				int index = urlPriorityIndexs[i];
+				workLink = workTr.child(index).select("a").first();
 				if(workLink != null){
 					break;
 				}
