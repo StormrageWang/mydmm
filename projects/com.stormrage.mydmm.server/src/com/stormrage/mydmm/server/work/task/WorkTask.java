@@ -69,9 +69,8 @@ public class WorkTask implements IDispatchTask {
 		} catch(TaskException e) {
 			e.printStackTrace();
 			logger.error("任务执行失败：" + e.getMessage(), e);
-		}  
+		}
 	}
-	
 	private void fillTaskBean(Document doc) throws TaskException {
 		logger.debug("开始解析作品信息");
 		//获取完整名称，完整番号，简单番号，日期，时长，演员类型
